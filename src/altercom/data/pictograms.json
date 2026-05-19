@@ -1,0 +1,316 @@
+[
+  {
+    "id": "hello",
+    "label": "Bonjour",
+    "phrase": "Bonjour",
+    "builderLabel": "bonjour",
+    "builderValue": "bonjour",
+    "category": "communication",
+    "image": "/assets/pictograms/hello.svg",
+    "color": "#6fbfa7"
+  },
+  {
+    "id": "thanks",
+    "label": "Merci",
+    "phrase": "Merci",
+    "builderLabel": "merci",
+    "builderValue": "merci",
+    "category": "communication",
+    "image": "/assets/pictograms/thanks.png",
+    "color": "#95cfb8"
+  },
+  {
+    "id": "need-help",
+    "label": "Aide",
+    "phrase": "J'ai besoin d'aide",
+    "builderLabel": "aide",
+    "builderValue": "de l'aide",
+    "category": "communication",
+    "image": "/assets/pictograms/help.svg",
+    "color": "#8bd3c0"
+  },
+  {
+    "id": "want-drink",
+    "label": "Boire",
+    "phrase": "Je veux boire",
+    "builderLabel": "boire",
+    "builderValue": "boire",
+    "category": "communication",
+    "image": "/assets/pictograms/drink.png",
+    "color": "#6bb8d6"
+  },
+  {
+    "id": "want-eat",
+    "label": "Manger",
+    "phrase": "Je veux manger",
+    "builderLabel": "manger",
+    "builderValue": "manger",
+    "category": "communication",
+    "image": "/assets/pictograms/eat.svg",
+    "color": "#f0b96c"
+  },
+  {
+    "id": "toilet",
+    "label": "Toilettes",
+    "phrase": "Je veux aller aux toilettes",
+    "builderLabel": "toilettes",
+    "builderValue": "aller aux toilettes",
+    "category": "communication",
+    "image": "/assets/pictograms/bathroom.png",
+    "color": "#a49ed7"
+  },
+  {
+    "id": "break",
+    "label": "Pause",
+    "phrase": "Je veux faire une pause",
+    "builderLabel": "pause",
+    "builderValue": "une pause",
+    "category": "communication",
+    "image": "/assets/pictograms/break.svg",
+    "color": "#f2cf66"
+  },
+  {
+    "id": "not-understood",
+    "label": "Pas compris",
+    "phrase": "Je ne comprends pas",
+    "builderLabel": "pas compris",
+    "builderValue": "je ne comprends pas",
+    "category": "communication",
+    "image": "/assets/pictograms/confused.svg",
+    "color": "#9ec3eb"
+  },
+  {
+    "id": "repeat-please",
+    "label": "Repete",
+    "phrase": "Repete s'il te plait",
+    "builderLabel": "repete",
+    "builderValue": "repete s'il te plait",
+    "category": "communication",
+    "image": "/assets/pictograms/please.png",
+    "color": "#c7d57d"
+  },
+  {
+    "id": "work-finished",
+    "label": "Termine",
+    "phrase": "J'ai termine",
+    "builderLabel": "termine",
+    "builderValue": "j'ai termine",
+    "category": "travail",
+    "image": "/assets/pictograms/finish.png",
+    "color": "#7ec4a8"
+  },
+  {
+    "id": "work-instruction",
+    "label": "Consigne",
+    "phrase": "Je n'ai pas compris la consigne",
+    "builderLabel": "consigne",
+    "builderValue": "je n'ai pas compris la consigne",
+    "category": "travail",
+    "image": "/assets/pictograms/workbook.svg",
+    "color": "#9eb8f0"
+  },
+  {
+    "id": "work-machine",
+    "label": "Machine",
+    "phrase": "La machine ne marche pas",
+    "builderLabel": "machine",
+    "builderValue": "la machine ne marche pas",
+    "category": "travail",
+    "image": "/assets/pictograms/machine.svg",
+    "color": "#ef8e83"
+  },
+  {
+    "id": "work-material",
+    "label": "Materiel",
+    "phrase": "Il manque du materiel",
+    "builderLabel": "materiel",
+    "builderValue": "il manque du materiel",
+    "category": "travail",
+    "image": "/assets/pictograms/materials.svg",
+    "color": "#f0ba7a"
+  },
+  {
+    "id": "call-supervisor",
+    "label": "Encadrant",
+    "phrase": "Je veux appeler un encadrant",
+    "builderLabel": "encadrant",
+    "builderValue": "appeler un encadrant",
+    "category": "travail",
+    "image": "/assets/pictograms/phone.svg",
+    "color": "#7aa9e6"
+  },
+  {
+    "id": "work-tidy",
+    "label": "Ranger",
+    "phrase": "Je dois ranger",
+    "builderLabel": "ranger",
+    "builderValue": "ranger",
+    "category": "travail",
+    "image": "/assets/pictograms/tidy.svg",
+    "color": "#9dd1b5"
+  },
+  {
+    "id": "work-clean",
+    "label": "Nettoyer",
+    "phrase": "Je dois nettoyer",
+    "builderLabel": "nettoyer",
+    "builderValue": "nettoyer",
+    "category": "travail",
+    "image": "/assets/pictograms/clean.svg",
+    "color": "#77c5d5"
+  },
+  {
+    "id": "work-check",
+    "label": "Verifier",
+    "phrase": "Je dois verifier",
+    "builderLabel": "verifier",
+    "builderValue": "verifier",
+    "category": "travail",
+    "image": "/assets/pictograms/check.svg",
+    "color": "#b0c4e6"
+  },
+  {
+    "id": "work-ready",
+    "label": "Pret",
+    "phrase": "Je suis pret",
+    "builderLabel": "pret",
+    "builderValue": "je suis pret",
+    "category": "travail",
+    "image": "/assets/pictograms/ready.svg",
+    "color": "#7fc9ad"
+  },
+  {
+    "id": "work-break",
+    "label": "Pause",
+    "phrase": "Je veux faire une pause",
+    "builderLabel": "pause",
+    "builderValue": "une pause",
+    "category": "travail",
+    "image": "/assets/pictograms/work-break.svg",
+    "color": "#f3cf70"
+  },
+  {
+    "id": "feeling-happy",
+    "label": "Content",
+    "phrase": "Je suis content",
+    "builderLabel": "content",
+    "builderValue": "je suis content",
+    "category": "emotions",
+    "image": "/assets/pictograms/happy.png",
+    "color": "#f3bc63"
+  },
+  {
+    "id": "feeling-tired",
+    "label": "Fatigue",
+    "phrase": "Je suis fatigue",
+    "builderLabel": "fatigue",
+    "builderValue": "je suis fatigue",
+    "category": "emotions",
+    "image": "/assets/pictograms/tired.svg",
+    "color": "#9eb7df"
+  },
+  {
+    "id": "feeling-stressed",
+    "label": "Stresse",
+    "phrase": "Je suis stresse",
+    "builderLabel": "stresse",
+    "builderValue": "je suis stresse",
+    "category": "emotions",
+    "image": "/assets/pictograms/worried.svg",
+    "color": "#ef9a7b"
+  },
+  {
+    "id": "feeling-sad",
+    "label": "Triste",
+    "phrase": "Je suis triste",
+    "builderLabel": "triste",
+    "builderValue": "je suis triste",
+    "category": "emotions",
+    "image": "/assets/pictograms/sad.png",
+    "color": "#8faad9"
+  },
+  {
+    "id": "feeling-angry",
+    "label": "Colere",
+    "phrase": "Je suis en colere",
+    "builderLabel": "en colere",
+    "builderValue": "je suis en colere",
+    "category": "emotions",
+    "image": "/assets/pictograms/angry.svg",
+    "color": "#df7a6c"
+  },
+  {
+    "id": "feeling-afraid",
+    "label": "Peur",
+    "phrase": "J'ai peur",
+    "builderLabel": "peur",
+    "builderValue": "j'ai peur",
+    "category": "emotions",
+    "image": "/assets/pictograms/afraid.svg",
+    "color": "#7c9de4"
+  },
+  {
+    "id": "feeling-alone",
+    "label": "Seul",
+    "phrase": "Je veux etre seul",
+    "builderLabel": "seul",
+    "builderValue": "je veux etre seul",
+    "category": "emotions",
+    "image": "/assets/pictograms/alone.svg",
+    "color": "#c7b3e1"
+  },
+  {
+    "id": "feeling-pain",
+    "label": "J'ai mal",
+    "phrase": "J'ai mal",
+    "builderLabel": "mal",
+    "builderValue": "j'ai mal",
+    "category": "emotions",
+    "image": "/assets/pictograms/pain.png",
+    "color": "#ef8b7c"
+  },
+  {
+    "id": "urgent-help",
+    "label": "Aide vite",
+    "phrase": "J'ai besoin d'aide maintenant",
+    "builderLabel": "aide vite",
+    "builderValue": "j'ai besoin d'aide maintenant",
+    "category": "urgence",
+    "image": "/assets/pictograms/help.svg",
+    "color": "#e46d64",
+    "alert": true
+  },
+  {
+    "id": "urgent-unwell",
+    "label": "Pas bien",
+    "phrase": "Je ne me sens pas bien",
+    "builderLabel": "pas bien",
+    "builderValue": "je ne me sens pas bien",
+    "category": "urgence",
+    "image": "/assets/pictograms/ambulance.svg",
+    "color": "#f09272",
+    "alert": true
+  },
+  {
+    "id": "urgent-pain",
+    "label": "J'ai mal",
+    "phrase": "J'ai mal",
+    "builderLabel": "mal",
+    "builderValue": "j'ai mal",
+    "category": "urgence",
+    "image": "/assets/pictograms/pain.png",
+    "color": "#dc615a",
+    "alert": true
+  },
+  {
+    "id": "urgent-call",
+    "label": "Appeler",
+    "phrase": "Appeler un encadrant",
+    "builderLabel": "appeler",
+    "builderValue": "appeler un encadrant",
+    "category": "urgence",
+    "image": "/assets/pictograms/phone.svg",
+    "color": "#d85f57",
+    "alert": true
+  }
+]

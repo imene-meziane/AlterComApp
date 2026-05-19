@@ -1,0 +1,17 @@
+{
+  "short_name": "AlterCom",
+  "name": "AlterCom - Communication ESAT",
+  "description": "Application simple de communication par pictogrammes pour l'ESAT Alter Ego.",
+  "icons": [
+    {
+      "src": "assets/logo/altercom-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#f7f4ec",
+  "background_color": "#fbfaf6"
+}

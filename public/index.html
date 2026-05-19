@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta
+    name="description"
+    content="AlterCom aide les travailleurs d'ESAT a communiquer avec des pictogrammes, des phrases simples et une synthese vocale."
+  >
+  <meta http-equiv="Content-Security-Policy" content="
+  default-src 'self'
+      'unsafe-inline'
+      'unsafe-eval'
+      http://*
+      https://*
+      wss://*.microsoft.com/cognitiveservices/
+      blob:
+      gap:
+      data:;
+  img-src * data: filesystem: blob:;
+  connect-src 'self' https://* localhost:* 127.0.0.1:* wss: ws: blob:;
+  ">
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+  <link rel="icon" href="%PUBLIC_URL%/assets/logo/altercom-logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/assets/logo/altercom-logo.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="AlterCom">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AlterCom">
+  <meta name="theme-color" content="#f7f4ec">
+  <meta name="robots" content="noindex">
+  <title>AlterCom | ESAT Alter Ego</title>
+</head>
+<body>
+  <noscript>
+    JavaScript est necessaire pour lancer AlterCom.
+  </noscript>
+  <div id="root"></div>
+</body>
+</html>

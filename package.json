@@ -1,0 +1,21 @@
+{
+  "name": "altercom-workspace",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Monorepo AlterCom avec frontend React et backend Express/MongoDB.",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n FRONTEND,BACKEND -c magenta,cyan \"npm run start --workspace frontend\" \"npm run dev --workspace backend\"",
+    "start": "npm run dev",
+    "dev:frontend": "npm run start --workspace frontend",
+    "dev:backend": "npm run dev --workspace backend",
+    "build": "npm run build --workspace frontend",
+    "seed": "npm run seed --workspace backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "short_name": "AlterCom",
+  "name": "AlterCom - Communication ESAT",
+  "icons": [
+    {
+      "src": "assets/logo/altercom-logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#f4efe6",
+  "background_color": "#fbf8f1"
+}
