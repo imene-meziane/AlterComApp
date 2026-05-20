@@ -46,7 +46,7 @@ const users = [
     avatar: 'MB',
     assignedWorkshopKey: 'repassage',
     simplificationLevel: 'medium',
-    supportNeeds: ['consignes etape par etape'],
+    supportNeeds: ['consignes étape par étape'],
     preferences: {
       displayMode: 'complete',
       speechRate: 1,
@@ -66,7 +66,7 @@ const users = [
     avatar: 'JP',
     assignedWorkshopKey: 'cuisine',
     simplificationLevel: 'high',
-    supportNeeds: ['rappel vocal', 'atelier tres guide'],
+    supportNeeds: ['rappel vocal', 'atelier très guidé'],
     preferences: {
       displayMode: 'simplified',
       speechRate: 0.92,
@@ -86,7 +86,7 @@ const users = [
     avatar: 'NG',
     assignedWorkshopKey: 'nettoyage',
     simplificationLevel: 'low',
-    supportNeeds: ['autonomie elevee'],
+    supportNeeds: ['autonomie élevée'],
     preferences: {
       displayMode: 'complete',
       speechRate: 0.96,
@@ -114,7 +114,7 @@ const categories = [
     key: 'actions',
     name: 'Actions',
     prompt: 'Je veux faire...',
-    description: 'Choisir une action simple a montrer ou demander.',
+    description: 'Choisir une action simple à montrer ou demander.',
     color: '#8ea9d7',
     icon: '/assets/pictograms/workbook.svg',
     order: 2,
@@ -122,9 +122,9 @@ const categories = [
   },
   {
     key: 'emotions',
-    name: 'Emotions',
+    name: 'Émotions',
     prompt: 'Je me sens...',
-    description: 'Montrer une emotion ou une douleur rapidement.',
+    description: 'Montrer une émotion ou une douleur rapidement.',
     color: '#edb57a',
     icon: '/assets/pictograms/emotions.svg',
     order: 3,
@@ -134,7 +134,7 @@ const categories = [
     key: 'lieux',
     name: 'Lieux',
     prompt: 'Je veux aller...',
-    description: 'Nommer un endroit utile dans la journee de travail.',
+    description: 'Nommer un endroit utile dans la journée de travail.',
     color: '#b2a6d6',
     icon: '/assets/pictograms/bathroom.png',
     order: 4,
@@ -142,9 +142,9 @@ const categories = [
   },
   {
     key: 'activites-atelier',
-    name: "Activites d'atelier",
+    name: "Activités d'atelier",
     prompt: "Dans l'atelier, je fais...",
-    description: 'Retrouver les gestes et taches lies aux ateliers ESAT.',
+    description: 'Retrouver les gestes et tâches liées aux ateliers ESAT.',
     color: '#f0c890',
     icon: '/assets/pictograms/work.svg',
     order: 5,
@@ -156,28 +156,28 @@ const workshops = [
   {
     key: 'repassage',
     name: 'Atelier repassage',
-    description: 'Pictogrammes utiles pour repasser, plier et preparer le linge.',
+    description: 'Pictogrammes utiles pour repasser, plier et préparer le linge.',
     color: '#90b8d6',
     icon: '/assets/pictograms/work-break.svg'
   },
   {
     key: 'conditionnement',
     name: 'Atelier conditionnement',
-    description: 'Pictogrammes utiles pour preparer, emballer et verifier un colis.',
+    description: 'Pictogrammes utiles pour préparer, emballer et vérifier un colis.',
     color: '#9ec59e',
     icon: '/assets/pictograms/materials.svg'
   },
   {
     key: 'cuisine',
     name: 'Atelier cuisine',
-    description: 'Pictogrammes utiles pour preparer, cuire et servir.',
+    description: 'Pictogrammes utiles pour préparer, cuire et servir.',
     color: '#f0bf83',
     icon: '/assets/pictograms/eat.svg'
   },
   {
     key: 'nettoyage',
     name: 'Atelier nettoyage',
-    description: 'Pictogrammes utiles pour nettoyer, ranger et verifier le poste.',
+    description: 'Pictogrammes utiles pour nettoyer, ranger et vérifier le poste.',
     color: '#d7b4a6',
     icon: '/assets/pictograms/clean.svg'
   }
@@ -264,10 +264,10 @@ const pictograms = [
   },
   {
     key: 'fini',
-    label: 'Termine',
-    phrase: "J'ai termine",
-    spokenText: "J'ai termine",
-    builderText: "j'ai termine",
+    label: 'Terminé',
+    phrase: "J'ai terminé",
+    spokenText: "J'ai terminé",
+    builderText: "j'ai terminé",
     keywords: ['termine', 'fini'],
     categoryKey: 'actions',
     workshopKeys: ['repassage', 'conditionnement', 'cuisine', 'nettoyage'],
@@ -277,10 +277,10 @@ const pictograms = [
   },
   {
     key: 'repeter',
-    label: 'Repeter',
-    phrase: "Peux-tu repeter s'il te plait ?",
-    spokenText: "Peux-tu repeter s'il te plait ?",
-    builderText: "peux-tu repeter s'il te plait",
+    label: 'Répéter',
+    phrase: "Peux-tu répéter s'il te plaît ?",
+    spokenText: "Peux-tu répéter s'il te plaît ?",
+    builderText: "peux-tu répéter s'il te plaît",
     keywords: ['repeter', 'comprendre', 'consigne'],
     categoryKey: 'actions',
     workshopKeys: ['repassage', 'conditionnement', 'cuisine', 'nettoyage'],
@@ -342,10 +342,10 @@ const pictograms = [
   },
   {
     key: 'fatigue',
-    label: 'Fatigue',
-    phrase: 'Je suis fatigue',
-    spokenText: 'Je suis fatigue',
-    builderText: 'je suis fatigue',
+    label: 'Fatigué',
+    phrase: 'Je suis fatigué',
+    spokenText: 'Je suis fatigué',
+    builderText: 'je suis fatigué',
     keywords: ['fatigue', 'repos'],
     categoryKey: 'emotions',
     workshopKeys: ['repassage', 'conditionnement', 'cuisine', 'nettoyage'],
@@ -355,10 +355,10 @@ const pictograms = [
   },
   {
     key: 'stresse',
-    label: 'Stresse',
-    phrase: 'Je suis stresse',
-    spokenText: 'Je suis stresse',
-    builderText: 'je suis stresse',
+    label: 'Stressé',
+    phrase: 'Je suis stressé',
+    spokenText: 'Je suis stressé',
+    builderText: 'je suis stressé',
     keywords: ['stress', 'inquiet'],
     categoryKey: 'emotions',
     workshopKeys: ['repassage', 'conditionnement', 'cuisine', 'nettoyage'],
@@ -472,10 +472,10 @@ const pictograms = [
   },
   {
     key: 'verifier-colis',
-    label: 'Verifier',
-    phrase: 'Je verifie le colis',
-    spokenText: 'Je verifie le colis',
-    builderText: 'je verifie le colis',
+    label: 'Vérifier',
+    phrase: 'Je vérifie le colis',
+    spokenText: 'Je vérifie le colis',
+    builderText: 'je vérifie le colis',
     keywords: ['verifier', 'controle', 'colis'],
     categoryKey: 'activites-atelier',
     workshopKeys: ['conditionnement'],
@@ -485,10 +485,10 @@ const pictograms = [
   },
   {
     key: 'preparer-repas',
-    label: 'Preparer',
-    phrase: 'Je prepare le repas',
-    spokenText: 'Je prepare le repas',
-    builderText: 'je prepare le repas',
+    label: 'Préparer',
+    phrase: 'Je prépare le repas',
+    spokenText: 'Je prépare le repas',
+    builderText: 'je prépare le repas',
     keywords: ['preparer', 'repas', 'cuisine'],
     categoryKey: 'activites-atelier',
     workshopKeys: ['cuisine'],
@@ -524,10 +524,10 @@ const pictograms = [
   },
   {
     key: 'verifier-proprete',
-    label: 'Verifier',
-    phrase: 'Je verifie si c est propre',
-    spokenText: 'Je verifie si c est propre',
-    builderText: 'je verifie si c est propre',
+    label: 'Vérifier',
+    phrase: "Je vérifie si c'est propre",
+    spokenText: "Je vérifie si c'est propre",
+    builderText: "je vérifie si c'est propre",
     keywords: ['verifier', 'proprete', 'controle'],
     categoryKey: 'activites-atelier',
     workshopKeys: ['nettoyage'],
@@ -567,14 +567,14 @@ const favorites = [
 const routines = [
   {
     key: 'preparer-colis',
-    title: 'Preparer un colis',
-    description: 'Une routine courte pour preparer un colis en conditionnement.',
+    title: 'Préparer un colis',
+    description: 'Une routine courte pour préparer un colis en conditionnement.',
     workshopKey: 'conditionnement',
     categoryKey: 'activites-atelier',
     assignedWorkerEmails: ['sarah.brunet@alterego.fr'],
     estimatedMinutes: 12,
     difficulty: 'facile',
-    supportText: 'Prends ton temps et valide chaque etape.',
+    supportText: 'Prends ton temps et valide chaque étape.',
     steps: [
       {
         title: 'Prendre le carton',
@@ -601,17 +601,17 @@ const routines = [
   {
     key: 'plier-le-linge',
     title: 'Plier le linge',
-    description: 'Routine pour finir le linge repasse proprement.',
+    description: 'Routine pour finir le linge repassé proprement.',
     workshopKey: 'repassage',
     categoryKey: 'activites-atelier',
     assignedWorkerEmails: ['malik.bensaid@alterego.fr'],
     estimatedMinutes: 15,
     difficulty: 'moyen',
-    supportText: 'Verifier chaque pile avant de passer a la suivante.',
+    supportText: 'Vérifier chaque pile avant de passer à la suivante.',
     steps: [
       {
         title: 'Prendre le linge',
-        instruction: 'Je prends le linge repasse.',
+        instruction: 'Je prends le linge repassé.',
         pictogramKey: 'repasser'
       },
       {
@@ -620,8 +620,8 @@ const routines = [
         pictogramKey: 'plier'
       },
       {
-        title: 'Verifier',
-        instruction: 'Je verifie que tout est bien plie.',
+        title: 'Vérifier',
+        instruction: 'Je vérifie que tout est bien plié.',
         pictogramKey: 'verifier-colis'
       }
     ]
@@ -635,11 +635,11 @@ const routines = [
     assignedWorkerEmails: ['julie.perrin@alterego.fr'],
     estimatedMinutes: 10,
     difficulty: 'facile',
-    supportText: 'Je peux demander de l aide si je suis fatiguee.',
+    supportText: "Je peux demander de l'aide si je suis fatiguée.",
     steps: [
       {
-        title: 'Preparer le plateau',
-        instruction: 'Je prepare le plateau.',
+        title: 'Préparer le plateau',
+        instruction: 'Je prépare le plateau.',
         pictogramKey: 'preparer-repas'
       },
       {
@@ -657,17 +657,17 @@ const routines = [
   {
     key: 'nettoyer-le-poste',
     title: 'Nettoyer le poste',
-    description: 'Routine simple pour l atelier nettoyage.',
+    description: "Routine simple pour l'atelier nettoyage.",
     workshopKey: 'nettoyage',
     categoryKey: 'activites-atelier',
     assignedWorkerEmails: ['noe.garnier@alterego.fr'],
     estimatedMinutes: 9,
     difficulty: 'facile',
-    supportText: 'Controle visuel final avant validation.',
+    supportText: 'Contrôle visuel final avant validation.',
     steps: [
       {
-        title: 'Prendre le materiel',
-        instruction: 'Je prends le bon materiel.',
+        title: 'Prendre le matériel',
+        instruction: 'Je prends le bon matériel.',
         pictogramKey: 'laver'
       },
       {
@@ -676,8 +676,8 @@ const routines = [
         pictogramKey: 'laver'
       },
       {
-        title: 'Verifier',
-        instruction: 'Je verifie si tout est propre.',
+        title: 'Vérifier',
+        instruction: 'Je vérifie si tout est propre.',
         pictogramKey: 'verifier-proprete'
       }
     ]
@@ -696,7 +696,7 @@ const messages = [
     workerEmail: 'malik.bensaid@alterego.fr',
     workshopKey: 'repassage',
     channel: 'message',
-    text: "J'ai termine.",
+    text: "J'ai terminé.",
     pictogramKeys: ['fini']
   },
   {
@@ -712,7 +712,7 @@ const alerts = [
     workerEmail: 'julie.perrin@alterego.fr',
     type: 'fatigue',
     priority: 'important',
-    message: 'Je suis fatiguee et j ai besoin d aide.',
+    message: "Je suis fatiguée et j'ai besoin d'aide.",
     status: 'pending'
   },
   {

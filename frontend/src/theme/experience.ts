@@ -30,7 +30,7 @@ export const categoryThemes: Record<
     soft: 'bg-sky',
     ring: 'ring-blue-200',
     icon: BookHeart,
-    tagline: 'Faire une action pas a pas'
+    tagline: 'Faire une action pas à pas'
   },
   emotions: {
     accent: 'text-orange-500',
@@ -70,42 +70,42 @@ export const workshopStories: Record<
 > = {
   repassage: {
     eyebrow: 'Atelier repassage',
-    title: 'Un parcours calme pour trier, plier et verifier le linge.',
-    note: 'Chaque etape garde des reperes visuels courts et rassurants.',
+    title: 'Un parcours calme pour trier, plier et vérifier le linge.',
+    note: 'Chaque étape garde des repères visuels courts et rassurants.',
     steps: [
-      { title: 'Preparer', text: 'Je prends le linge et le materiel.' },
+      { title: 'Préparer', text: 'Je prends le linge et le matériel.' },
       { title: 'Repasser', text: 'Je repasse doucement, sans me presser.' },
-      { title: 'Verifier', text: 'Je regarde si le linge est bien termine.' }
+      { title: 'Vérifier', text: 'Je regarde si le linge est bien terminé.' }
     ]
   },
   conditionnement: {
     eyebrow: 'Atelier conditionnement',
-    title: 'Une suite simple pour preparer, emballer et controler.',
-    note: 'Les pictogrammes aident a suivre le colis de bout en bout.',
+    title: 'Une suite simple pour préparer, emballer et contrôler.',
+    note: 'Les pictogrammes aident à suivre le colis de bout en bout.',
     steps: [
-      { title: 'Preparer', text: 'Je prends le carton et les produits.' },
+      { title: 'Préparer', text: 'Je prends le carton et les produits.' },
       { title: 'Emballer', text: "Je ferme et je range le colis avec soin." },
-      { title: 'Controler', text: 'Je verifie avant de dire que j ai fini.' }
+      { title: 'Contrôler', text: "Je vérifie avant de dire que j'ai fini." }
     ]
   },
   cuisine: {
     eyebrow: 'Atelier cuisine',
-    title: 'Une ambiance plus chaleureuse pour preparer, servir et nettoyer.',
-    note: 'Les gestes sont montres en peu de mots, avec des reperes tres visuels.',
+    title: 'Une ambiance plus chaleureuse pour préparer, servir et nettoyer.',
+    note: 'Les gestes sont montrés en peu de mots, avec des repères très visuels.',
     steps: [
-      { title: 'Preparer', text: 'Je prepare les ingredients et le poste.' },
+      { title: 'Préparer', text: 'Je prépare les ingrédients et le poste.' },
       { title: 'Servir', text: 'Je sers calmement avec une consigne claire.' },
-      { title: 'Nettoyer', text: 'Je remets le poste propre a la fin.' }
+      { title: 'Nettoyer', text: 'Je remets le poste propre à la fin.' }
     ]
   },
   nettoyage: {
     eyebrow: 'Atelier nettoyage',
-    title: 'Des reperes clairs pour preparer, nettoyer et verifier.',
-    note: 'Le parcours reste tres lisible sur tablette et facile a suivre.',
+    title: 'Des repères clairs pour préparer, nettoyer et vérifier.',
+    note: 'Le parcours reste très lisible sur tablette et facile à suivre.',
     steps: [
-      { title: 'Preparer', text: 'Je prends le bon materiel avant de commencer.' },
-      { title: 'Nettoyer', text: 'Je lave le poste ou la zone demandee.' },
-      { title: 'Verifier', text: 'Je regarde si la zone est propre et finie.' }
+      { title: 'Préparer', text: 'Je prends le bon matériel avant de commencer.' },
+      { title: 'Nettoyer', text: 'Je lave le poste ou la zone demandée.' },
+      { title: 'Vérifier', text: 'Je regarde si la zone est propre et finie.' }
     ]
   }
 };
@@ -117,7 +117,7 @@ export function getWorkshopStory(workshop?: Workshop | null) {
 export const workerWelcomeNotes = [
   'Choisis une image pour parler.',
   'Ton message se construit en douceur.',
-  'Les favoris restent tout pres.',
+  'Les favoris restent tout près.',
   'Le bouton urgence est toujours visible.'
 ];
 
@@ -136,7 +136,7 @@ export const emotionalWeather = [
   },
   {
     title: 'Besoin de soutien',
-    text: 'L aide est toujours disponible.',
+    text: "L'aide est toujours disponible.",
     bg: 'bg-rose-50',
     accent: 'text-rose-500'
   }

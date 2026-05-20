@@ -234,7 +234,7 @@ router.post(
     } = req.body;
 
     if (!key || !title || !category) {
-      throw httpError(400, 'Cle, titre et categorie sont requis.');
+      throw httpError(400, 'Clé, titre et catégorie sont requis.');
     }
 
     const existingRoutine = await Routine.findOne({
@@ -242,12 +242,12 @@ router.post(
     });
 
     if (existingRoutine) {
-      throw httpError(409, 'Cette routine existe deja.');
+      throw httpError(409, 'Cette routine existe déjà.');
     }
 
     const categoryDoc = await resolveCategory(category);
     if (!categoryDoc) {
-      throw httpError(400, 'Categorie invalide.');
+      throw httpError(400, 'Catégorie invalide.');
     }
 
     const workshopDoc = await resolveWorkshop(workshop);
@@ -319,7 +319,7 @@ router.put(
     if (category !== undefined) {
       const categoryDoc = await resolveCategory(category);
       if (!categoryDoc) {
-        throw httpError(400, 'Categorie invalide.');
+        throw httpError(400, 'Catégorie invalide.');
       }
       routine.category = categoryDoc._id;
     }
@@ -377,7 +377,7 @@ router.post(
     });
 
     if (!assignment) {
-      throw httpError(403, 'Routine non assignee.');
+      throw httpError(403, 'Routine non assignée.');
     }
 
     const stepIndex = Number(
@@ -385,7 +385,7 @@ router.post(
     );
 
     if (Number.isNaN(stepIndex) || stepIndex < 0 || stepIndex >= routine.steps.length) {
-      throw httpError(400, 'Etape invalide.');
+      throw httpError(400, 'Étape invalide.');
     }
 
     assignment.status = 'in_progress';
@@ -412,7 +412,7 @@ router.post(
         worker: user._id,
         workshop: user.assignedWorkshop || routine.workshop || null,
         routine: routine._id,
-        text: `Routine terminee : ${routine.title}`,
+        text: `Routine terminée : ${routine.title}`,
         channel: 'routine'
       });
     }
@@ -441,7 +441,7 @@ router.post(
     });
 
     if (!assignment) {
-      throw httpError(403, 'Routine non assignee.');
+      throw httpError(403, 'Routine non assignée.');
     }
 
     assignment.status = 'assigned';

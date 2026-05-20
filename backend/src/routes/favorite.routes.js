@@ -113,7 +113,7 @@ router.delete(
 
     const isSelf = favorite.user.toString() === req.user._id.toString();
     if (!isSelf && req.user.role !== 'supervisor') {
-      throw httpError(403, 'Suppression non autorisee.');
+      throw httpError(403, 'Suppression non autorisée.');
     }
 
     await favorite.deleteOne();

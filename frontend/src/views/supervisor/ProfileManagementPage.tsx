@@ -143,7 +143,7 @@ export function ProfileManagementPage(): React.ReactElement {
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Chaque travailleur garde son atelier, son niveau de simplification, ses routines et ses preferences."
+        description="Chaque travailleur garde son atelier, son niveau de simplification, ses routines et ses préférences."
         eyebrow="Gestion profils"
         title="Profils travailleurs"
       />
@@ -203,7 +203,7 @@ export function ProfileManagementPage(): React.ReactElement {
                   }
                   value={draft.displayMode}
                 >
-                  <option value="simplified">Mode simplifie</option>
+                  <option value="simplified">Mode simplifié</option>
                   <option value="complete">Mode complet</option>
                 </select>
               </div>
@@ -222,13 +222,13 @@ export function ProfileManagementPage(): React.ReactElement {
                 >
                   <option value="high">Simplification forte</option>
                   <option value="medium">Simplification moyenne</option>
-                  <option value="low">Autonomie elevee</option>
+                  <option value="low">Autonomie élevée</option>
                 </select>
 
                 <input
                   className="h-14 w-full rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft"
                   onChange={event => updateDraft(worker.id, 'supportNeedsText', event.target.value)}
-                  placeholder="Besoins specifiques"
+                  placeholder="Besoins spécifiques"
                   value={draft.supportNeedsText}
                 />
               </div>
@@ -244,7 +244,7 @@ export function ProfileManagementPage(): React.ReactElement {
 
               <div className="space-y-3">
                 <p className="text-sm font-black uppercase tracking-[0.16em] text-muted">
-                  Routines assignees
+                  Routines assignées
                 </p>
                 <div className="grid gap-2">
                   {routines.map(routine => (

@@ -81,9 +81,9 @@ export function PictogramsPage(): React.ReactElement {
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Des categories horizontales, une recherche douce et de grands pictogrammes pensés pour la tablette."
+        description="Des catégories horizontales, une recherche douce et de grands pictogrammes pensés pour la tablette."
         eyebrow="Pictogrammes"
-        title={selectedCategory ? selectedCategory.prompt : 'Choisir une categorie visuelle'}
+        title={selectedCategory ? selectedCategory.prompt : 'Choisir une catégorie visuelle'}
       />
 
       <Card className="overflow-hidden p-0" tone="soft">
@@ -98,7 +98,7 @@ export function PictogramsPage(): React.ReactElement {
               </h2>
               <p className="text-base leading-8 text-muted">
                 {selectedCategory?.description ||
-                  'Chaque pictogramme s ajoute dans Mon message avec un retour visuel immediat.'}
+                  "Chaque pictogramme s'ajoute dans Mon message avec un retour visuel immédiat."}
               </p>
             </div>
           </div>
@@ -119,7 +119,7 @@ export function PictogramsPage(): React.ReactElement {
               />
             </div>
             <p className="text-sm leading-7 text-muted">
-              La recherche reste discrete. Tu peux aussi naviguer seulement avec les categories.
+              La recherche reste discrète. Tu peux aussi naviguer seulement avec les catégories.
             </p>
           </Card>
         </div>
@@ -170,8 +170,8 @@ export function PictogramsPage(): React.ReactElement {
         </motion.div>
       ) : (
         <EmptyState
-          description="Essaie une autre categorie ou un autre mot-cle pour faire apparaitre des pictogrammes."
-          title="Aucun pictogramme trouve"
+          description="Essaie une autre catégorie ou un autre mot-clé pour faire apparaître des pictogrammes."
+          title="Aucun pictogramme trouvé"
         />
       )}
     </div>

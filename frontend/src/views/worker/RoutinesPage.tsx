@@ -68,7 +68,7 @@ export function RoutinesPage(): React.ReactElement {
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Retrouve tes routines du jour, avance etape par etape et valide quand c est termine."
+        description="Retrouve tes routines du jour, avance étape par étape et valide quand c'est terminé."
         eyebrow="Mes routines"
         title={`Routines de ${user?.firstName || 'travail'}`}
       />
@@ -121,12 +121,12 @@ export function RoutinesPage(): React.ReactElement {
                     </p>
                     <p className="mt-2 text-xl font-black text-ink">
                       {isCompleted
-                        ? 'Routine terminee'
-                        : currentStep?.title || 'Routine prete a commencer'}
+                        ? 'Routine terminée'
+                        : currentStep?.title || 'Routine prête à commencer'}
                     </p>
                     <p className="mt-2 text-sm leading-7 text-muted">
                       {isCompleted
-                        ? 'Bravo, toutes les etapes sont validees.'
+                        ? 'Bravo, toutes les étapes sont validées.'
                         : currentStep?.instruction || routine.supportText || 'Prends ton temps et avance doucement.'}
                     </p>
                   </div>
@@ -179,7 +179,7 @@ export function RoutinesPage(): React.ReactElement {
                       })}
                       variant="secondary"
                     >
-                      Lire l etape
+                      Lire l'étape
                     </Button>
                     <Button
                       className="h-11 px-4 text-sm"
@@ -195,7 +195,7 @@ export function RoutinesPage(): React.ReactElement {
                       iconLeft={<Check className="h-4 w-4" />}
                       onClick={() => validateStep(routine)}
                     >
-                      {pendingId === routine.id ? 'Validation...' : isCompleted ? 'Routine terminee' : 'Valider etape'}
+                      {pendingId === routine.id ? 'Validation...' : isCompleted ? 'Routine terminée' : 'Valider étape'}
                     </Button>
                   </div>
                 </div>
@@ -205,8 +205,8 @@ export function RoutinesPage(): React.ReactElement {
         </div>
       ) : (
         <EmptyState
-          description="Quand un encadrant t attribue une routine, elle apparait ici avec ses etapes."
-          title="Aucune routine assignee"
+          description="Quand un encadrant t'attribue une routine, elle apparaît ici avec ses étapes."
+          title="Aucune routine assignée"
         />
       )}
     </div>

@@ -58,14 +58,14 @@ async function registerSupervisor(req, res) {
   const { firstName, lastName, email, password, avatar = '' } = req.body;
 
   if (!firstName || !lastName || !email || !password) {
-    throw httpError(400, 'Prenom, nom, email et mot de passe sont requis.');
+    throw httpError(400, 'Prénom, nom, email et mot de passe sont requis.');
   }
 
   const normalizedEmail = normalizeEmail(email);
   const existingUser = await User.findOne({ email: normalizedEmail });
 
   if (existingUser) {
-    throw httpError(409, 'Un compte existe deja avec cet email.');
+    throw httpError(409, 'Un compte existe déjà avec cet email.');
   }
 
   const user = await User.create({

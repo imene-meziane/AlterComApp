@@ -78,10 +78,10 @@ export function WorkshopManagementPage(): React.ReactElement {
 
     if (editingId) {
       await api.put(`/workshops/${editingId}`, form, token);
-      setFeedback('Atelier mis a jour.');
+      setFeedback('Atelier mis à jour.');
     } else {
       await api.post('/workshops', form, token);
-      setFeedback('Atelier ajoute.');
+      setFeedback('Atelier ajouté.');
     }
 
     setWorkshops(await fetchWorkshops(token));
@@ -89,7 +89,7 @@ export function WorkshopManagementPage(): React.ReactElement {
   }
 
   if (loading) {
-    return <ScreenLoader message="Preparation des ateliers..." />;
+    return <ScreenLoader message="Préparation des ateliers..." />;
   }
 
   return (
@@ -123,9 +123,9 @@ export function WorkshopManagementPage(): React.ReactElement {
             </label>
 
             <div className="flex flex-wrap gap-3">
-              <Button type="submit">{editingId ? 'Mettre a jour' : 'Ajouter'}</Button>
+              <Button type="submit">{editingId ? 'Mettre à jour' : 'Ajouter'}</Button>
               <Button onClick={resetForm} variant="ghost">
-                Reinitialiser
+                Réinitialiser
               </Button>
             </div>
 

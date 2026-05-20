@@ -40,8 +40,8 @@ export function AlertsPage(): React.ReactElement {
           status,
           responseNote:
             status === 'resolved'
-              ? 'Aide prise en compte par l encadrant.'
-              : 'Alerte vue par l encadrant.'
+              ? "Aide prise en compte par l'encadrant."
+              : "Alerte vue par l'encadrant."
         },
         token
       );
@@ -59,16 +59,16 @@ export function AlertsPage(): React.ReactElement {
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Retrouver les demandes d aide, urgences et incomprehensions dans une vue claire et priorisee."
+        description="Retrouver les demandes d'aide, urgences et incompréhensions dans une vue claire et priorisée."
         eyebrow="Alertes"
-        title="Suivi des demandes d aide"
+        title="Suivi des demandes d'aide"
       />
 
       <div className="grid gap-4 md:grid-cols-3">
         {[
           { label: 'En attente', value: metrics.pending, tone: 'bg-amber-50 text-orange-500' },
           { label: 'Urgentes', value: metrics.urgent, tone: 'bg-rose-50 text-rose-500' },
-          { label: 'Resolues', value: metrics.resolved, tone: 'bg-emerald-50 text-emerald-600' }
+          { label: 'Résolues', value: metrics.resolved, tone: 'bg-emerald-50 text-emerald-600' }
         ].map(item => (
           <Card className="space-y-4" key={item.label} tone="soft">
             <div className={`flex h-14 w-14 items-center justify-center rounded-[1.4rem] ${item.tone}`}>
@@ -125,7 +125,7 @@ export function AlertsPage(): React.ReactElement {
                 iconLeft={<Check className="h-4 w-4" />}
                 onClick={() => updateAlertStatus(alert.id, 'resolved')}
               >
-                {pendingId === alert.id ? 'Mise a jour...' : 'Resoudre'}
+                {pendingId === alert.id ? 'Mise à jour...' : 'Résoudre'}
               </Button>
             </div>
           </Card>

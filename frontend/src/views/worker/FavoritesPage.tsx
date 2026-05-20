@@ -43,7 +43,7 @@ export function FavoritesPage(): React.ReactElement {
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Tes phrases et pictogrammes preferes restent accessibles en quelques gestes."
+        description="Tes phrases et pictogrammes préférés restent accessibles en quelques gestes."
         eyebrow="Favoris"
         title="Mes raccourcis utiles"
       />
@@ -83,7 +83,7 @@ export function FavoritesPage(): React.ReactElement {
           </div>
         ) : (
           <EmptyState
-            description="Ajoute des pictogrammes en favori pour les retrouver plus vite depuis l accueil."
+            description="Ajoute des pictogrammes en favori pour les retrouver plus vite depuis l'accueil."
             title="Aucun pictogramme favori"
           />
         )}
@@ -92,7 +92,7 @@ export function FavoritesPage(): React.ReactElement {
       <section className="space-y-4">
         <div>
           <Badge>Phrases favorites</Badge>
-          <p className="mt-3 text-2xl font-black text-ink">Messages deja prepares</p>
+          <p className="mt-3 text-2xl font-black text-ink">Messages déjà préparés</p>
         </div>
 
         {phraseFavorites.length ? (

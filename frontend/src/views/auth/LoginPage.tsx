@@ -238,7 +238,7 @@ export function LoginPage(): React.ReactElement {
                       {authMode === 'register' ? 'Inscription' : 'Connexion'}
                     </p>
                     <h2 className="font-display text-4xl font-semibold tracking-[-0.03em] text-ink">
-                      {authMode === 'register' ? 'Creer un espace encadrant' : 'Bienvenue'}
+                      {authMode === 'register' ? 'Créer un espace encadrant' : 'Bienvenue'}
                     </h2>
                   </div>
                   <button
@@ -249,7 +249,7 @@ export function LoginPage(): React.ReactElement {
                     }}
                     type="button"
                   >
-                    {authMode === 'register' ? 'J ai deja un compte' : 'Creer un compte'}
+                    {authMode === 'register' ? "J'ai déjà un compte" : 'Créer un compte'}
                   </button>
                 </div>
                 <p className="text-base leading-7 text-muted">
@@ -412,7 +412,7 @@ export function LoginPage(): React.ReactElement {
                       ? 'Creation...'
                       : 'Connexion...'
                     : authMode === 'register'
-                      ? 'Creer mon espace'
+                      ? 'Créer mon espace'
                       : 'Continuer'}
                 </Button>
               </form>

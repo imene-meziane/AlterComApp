@@ -12,7 +12,7 @@ export function NotFoundPage(): React.ReactElement {
           <Compass className="h-10 w-10" />
         </div>
         <div className="space-y-3">
-          <h1 className="text-4xl font-black text-ink">Cette page n existe pas.</h1>
+          <h1 className="text-4xl font-black text-ink">Cette page n'existe pas.</h1>
           <p className="text-lg leading-8 text-muted">
             Retourne vers AlterCom pour retrouver le bon parcours.
           </p>
@@ -21,7 +21,7 @@ export function NotFoundPage(): React.ReactElement {
           className="inline-flex min-h-12 items-center justify-center rounded-full bg-brand px-5 text-base font-bold text-white shadow-float transition hover:bg-blue-500"
           to="/"
         >
-          Revenir a l accueil
+          Revenir à l'accueil
         </Link>
       </Card>
     </div>

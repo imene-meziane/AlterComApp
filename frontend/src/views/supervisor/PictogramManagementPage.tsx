@@ -124,6 +124,8 @@ export function PictogramManagementPage(): React.ReactElement {
     const payload = {
       key: form.label
         .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, ''),
       label: form.label,
@@ -147,7 +149,7 @@ export function PictogramManagementPage(): React.ReactElement {
       setFeedback('Pictogramme mis a jour.');
     } else {
       await api.post('/pictograms', payload, token);
-      setFeedback('Nouveau pictogramme ajoute.');
+      setFeedback('Nouveau pictogramme ajouté.');
     }
 
     const data = await fetchManagementData(token);
@@ -158,15 +160,15 @@ export function PictogramManagementPage(): React.ReactElement {
   }
 
   if (loading) {
-    return <ScreenLoader message="Organisation de la bibliotheque pictogrammes..." />;
+    return <ScreenLoader message="Organisation de la bibliothèque pictogrammes..." />;
   }
 
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Une gestion plus visuelle pour ajouter, categoriser et affecter les pictogrammes sans interface froide."
+        description="Une gestion plus visuelle pour ajouter, catégoriser et affecter les pictogrammes sans interface froide."
         eyebrow="Gestion pictogrammes"
-        title="Bibliotheque visuelle"
+        title="Bibliothèque visuelle"
       />
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -178,13 +180,13 @@ export function PictogramManagementPage(): React.ReactElement {
             bg: 'bg-blue-50 text-brand'
           },
           {
-            title: 'Categories',
+            title: 'Catégories',
             value: categories.length,
             icon: Sparkles,
             bg: 'bg-violet-50 text-violet-500'
           },
           {
-            title: 'Ateliers lies',
+            title: 'Ateliers liés',
             value: workshops.length,
             icon: ImagePlus,
             bg: 'bg-emerald-50 text-emerald-600'
@@ -216,7 +218,7 @@ export function PictogramManagementPage(): React.ReactElement {
           <form className="grid gap-4" onSubmit={handleSubmit}>
             <input className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft" name="label" onChange={updateForm} placeholder="Mot visible" required type="text" value={form.label} />
             <input className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft" name="phrase" onChange={updateForm} placeholder="Phrase FALC courte" required type="text" value={form.phrase} />
-            <input className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft" name="spokenText" onChange={updateForm} placeholder="Texte lu a voix haute" type="text" value={form.spokenText} />
+            <input className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft" name="spokenText" onChange={updateForm} placeholder="Texte lu à voix haute" type="text" value={form.spokenText} />
             <input className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft" name="builderText" onChange={updateForm} placeholder="Texte pour Mon message" type="text" value={form.builderText} />
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -235,7 +237,7 @@ export function PictogramManagementPage(): React.ReactElement {
 
             <div className="space-y-3 rounded-[26px] bg-slate-50 p-4">
               <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-muted">
-                Ateliers associes
+                Ateliers associés
               </p>
               <div className="flex flex-wrap gap-2">
                 {workshops.map(workshop => (
@@ -258,7 +260,7 @@ export function PictogramManagementPage(): React.ReactElement {
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="flex items-center gap-3 rounded-[24px] bg-slate-50 px-4 py-4 text-sm font-extrabold text-ink">
                 <input checked={form.showInSimplified} name="showInSimplified" onChange={updateForm} type="checkbox" />
-                Visible en mode simplifie
+                Visible en mode simplifié
               </label>
               <label className="flex items-center gap-3 rounded-[24px] bg-slate-50 px-4 py-4 text-sm font-extrabold text-ink">
                 <input checked={form.isActive} name="isActive" onChange={updateForm} type="checkbox" />
@@ -267,9 +269,9 @@ export function PictogramManagementPage(): React.ReactElement {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Button type="submit">{editingId ? 'Mettre a jour' : 'Ajouter'}</Button>
+              <Button type="submit">{editingId ? 'Mettre à jour' : 'Ajouter'}</Button>
               <Button onClick={resetForm} variant="ghost">
-                Reinitialiser
+                Réinitialiser
               </Button>
             </div>
 
@@ -297,7 +299,7 @@ export function PictogramManagementPage(): React.ReactElement {
                     <p className="text-lg font-black text-ink">{pictogram.label}</p>
                     <p className="text-sm text-muted">{pictogram.category.name}</p>
                     <p className="mt-1 text-sm leading-7 text-muted">
-                      {pictogram.workshops.map(workshop => workshop.name).join(', ') || 'General'}
+                      {pictogram.workshops.map(workshop => workshop.name).join(', ') || 'Général'}
                     </p>
                   </div>
                 </div>

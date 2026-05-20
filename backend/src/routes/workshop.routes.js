@@ -101,7 +101,7 @@ router.get(
       (!req.user.assignedWorkshop ||
         req.user.assignedWorkshop.toString() !== workshop._id.toString())
     ) {
-      throw httpError(403, 'Acces refuse a cet atelier.');
+      throw httpError(403, 'Accès refusé à cet atelier.');
     }
 
     res.json(workshop);
@@ -116,12 +116,12 @@ router.post(
     const { key, name, description, color, icon, isActive = true } = req.body;
 
     if (!key || !name) {
-      throw httpError(400, 'Cle et nom d atelier requis.');
+      throw httpError(400, "Clé et nom d'atelier requis.");
     }
 
     const existing = await Workshop.findOne({ key: key.toLowerCase().trim() });
     if (existing) {
-      throw httpError(409, 'Cet atelier existe deja.');
+      throw httpError(409, 'Cet atelier existe déjà.');
     }
 
     const workshop = await Workshop.create({

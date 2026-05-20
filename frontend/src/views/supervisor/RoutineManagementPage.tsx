@@ -33,7 +33,7 @@ const initialDraft: RoutineDraft = {
   estimatedMinutes: '10',
   difficulty: 'facile',
   supportText: '',
-  stepsText: 'Prendre le materiel | Je prends le bon materiel.\nRealiser | Je fais l action calmement.\nVerifier | Je verifie avant de terminer.'
+  stepsText: "Prendre le matériel | Je prends le bon matériel.\nRéaliser | Je fais l'action calmement.\nVérifier | Je vérifie avant de terminer."
 };
 
 export function RoutineManagementPage(): React.ReactElement {
@@ -111,7 +111,7 @@ export function RoutineManagementPage(): React.ReactElement {
       token
     );
 
-    setFeedback(`Routine creee : ${draft.title}`);
+    setFeedback(`Routine créée : ${draft.title}`);
     setDraft(initialDraft);
     const [fetchedRoutines, fetchedWorkers, fetchedWorkshops, fetchedCategories] =
       await Promise.all([
@@ -144,7 +144,7 @@ export function RoutineManagementPage(): React.ReactElement {
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Creer des routines simples, les assigner a un travailleur et garder une progression claire."
+        description="Créer des routines simples, les assigner à un travailleur et garder une progression claire."
         eyebrow="Routines"
         title="Gestion des routines"
       />
@@ -172,7 +172,7 @@ export function RoutineManagementPage(): React.ReactElement {
           <input
             className="h-14 w-full rounded-[1.4rem] bg-white px-5 shadow-soft"
             onChange={event => updateDraft('key', event.target.value)}
-            placeholder="Cle technique"
+            placeholder="Clé technique"
             value={draft.key}
           />
           <textarea
@@ -201,7 +201,7 @@ export function RoutineManagementPage(): React.ReactElement {
               onChange={event => updateDraft('category', event.target.value)}
               value={draft.category}
             >
-              <option value="">Choisir une categorie</option>
+              <option value="">Choisir une catégorie</option>
               {categories.map(category => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -231,7 +231,7 @@ export function RoutineManagementPage(): React.ReactElement {
             >
               <option value="facile">Facile</option>
               <option value="moyen">Moyen</option>
-              <option value="avance">Avance</option>
+              <option value="avance">Avancé</option>
             </select>
           </div>
 
@@ -257,11 +257,11 @@ export function RoutineManagementPage(): React.ReactElement {
           />
 
           <p className="text-sm leading-6 text-muted">
-            Une ligne par etape : <strong>Titre | Instruction | pictogramKey</strong>
+            Une ligne par étape : <strong>Titre | Instruction | pictogramKey</strong>
           </p>
 
           <Button iconLeft={<Check className="h-4 w-4" />} onClick={createRoutine}>
-            Creer la routine
+            Créer la routine
           </Button>
         </Card>
 

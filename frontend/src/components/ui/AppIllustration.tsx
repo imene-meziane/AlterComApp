@@ -35,7 +35,7 @@ export function AppIllustration(): React.ReactElement {
 
             <div className="rounded-[1.5rem] bg-white px-4 py-3 shadow-soft">
               <div className="flex flex-wrap gap-2">
-                {['J ai besoin', 'd aide'].map(item => (
+                {["J'ai besoin", "d'aide"].map(item => (
                   <span
                     className="rounded-full bg-sky px-3 py-2 text-sm font-black text-brand"
                     key={item}

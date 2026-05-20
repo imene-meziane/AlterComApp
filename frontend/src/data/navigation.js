@@ -2,7 +2,7 @@ export const workerNavigation = [
   { to: '/worker', label: 'Accueil' },
   { to: '/worker/communication', label: 'Communiquer' },
   { to: '/worker/travail', label: 'Travail' },
-  { to: '/worker/emotions', label: 'Emotions' },
+  { to: '/worker/emotions', label: 'Émotions' },
   { to: '/worker/routines', label: 'Mes routines' },
   { to: '/worker/urgence', label: 'Urgence' },
   { to: '/worker/phrase', label: 'Ma phrase' }
@@ -11,7 +11,7 @@ export const workerNavigation = [
 export const supervisorNavigation = [
   { to: '/supervisor', label: 'Tableau de bord' },
   { to: '/supervisor/pictograms', label: 'Pictogrammes' },
-  { to: '/supervisor/categories', label: 'Categories' },
+  { to: '/supervisor/categories', label: 'Catégories' },
   { to: '/supervisor/routines', label: 'Routines' },
   { to: '/supervisor/workers', label: 'Travailleurs' },
   { to: '/supervisor/alerts', label: 'Alertes' }
@@ -34,7 +34,7 @@ export const workerHomeCards = [
   },
   {
     to: '/worker/emotions',
-    title: 'Emotions',
+    title: 'Émotions',
     description: 'Montre comment tu te sens.',
     color: '#e7a45c',
     icon: '/assets/pictograms/emotions.svg'
@@ -42,7 +42,7 @@ export const workerHomeCards = [
   {
     to: '/worker/routines',
     title: 'Mes routines',
-    description: 'Suis les etapes de ton travail.',
+    description: 'Suis les étapes de ton travail.',
     color: '#ad97ce',
     icon: '/assets/pictograms/workbook.svg'
   },

@@ -151,14 +151,14 @@ router.post(
     } = req.body;
 
     if (!firstName || !lastName || !email) {
-      throw httpError(400, 'Prenom, nom et email sont requis.');
+      throw httpError(400, 'Prénom, nom et email sont requis.');
     }
 
     const normalizedEmail = normalizeEmail(email);
     const existingUser = await User.findOne({ email: normalizedEmail });
 
     if (existingUser) {
-      throw httpError(409, 'Un travailleur existe deja avec cet email.');
+      throw httpError(409, 'Un travailleur existe déjà avec cet email.');
     }
 
     const workshop = await resolveWorkshop(assignedWorkshop);
@@ -204,7 +204,7 @@ router.get(
       req.user.role === 'supervisor' || req.user._id.toString() === req.params.id;
 
     if (!canAccess) {
-      throw httpError(403, 'Acces refuse a cet utilisateur.');
+      throw httpError(403, 'Accès refusé à cet utilisateur.');
     }
 
     const user = await populateUser(req.params.id);
@@ -225,7 +225,7 @@ router.put(
     const isSupervisor = req.user.role === 'supervisor';
 
     if (!isSelf && !isSupervisor) {
-      throw httpError(403, 'Modification non autorisee.');
+      throw httpError(403, 'Modification non autorisée.');
     }
 
     const user = await User.findById(req.params.id);

@@ -270,7 +270,7 @@ export function useComposer(): ComposerContextValue {
   const context = useContext(ComposerContext);
 
   if (!context) {
-    throw new Error('useComposer doit etre utilise dans ComposerProvider.');
+    throw new Error('useComposer doit être utilisé dans ComposerProvider.');
   }
 
   return context;

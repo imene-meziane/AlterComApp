@@ -208,7 +208,7 @@ router.post(
 
     const categoryDoc = await findCategoryReference(category);
     if (!categoryDoc) {
-      throw httpError(400, 'Categorie invalide.');
+      throw httpError(400, 'Catégorie invalide.');
     }
 
     const pictogram = await Pictogram.create({
@@ -338,7 +338,7 @@ router.put(
     if (category !== undefined) {
       const categoryDoc = await findCategoryReference(category);
       if (!categoryDoc) {
-        throw httpError(400, 'Categorie invalide.');
+        throw httpError(400, 'Catégorie invalide.');
       }
       pictogram.category = categoryDoc._id;
     }

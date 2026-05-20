@@ -139,7 +139,7 @@ export function WorkerSettingsPage(): React.ReactElement {
               </div>
               <div>
                 <Badge>Navigation</Badge>
-                <p className="mt-2 text-xl font-black text-ink">Recherche et reperes</p>
+                <p className="mt-2 text-xl font-black text-ink">Recherche et repères</p>
               </div>
             </div>
 
@@ -147,7 +147,7 @@ export function WorkerSettingsPage(): React.ReactElement {
               <p className="text-sm font-bold text-muted">Recherche dans les pictogrammes</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
-                  { value: false, label: 'Simple', hint: 'Naviguer avec les categories.' },
+                  { value: false, label: 'Simple', hint: 'Naviguer avec les catégories.' },
                   { value: true, label: 'Visible', hint: 'Afficher le champ de recherche.' }
                 ].map(option => (
                   <button

@@ -45,12 +45,12 @@ router.post(
     const { key, name, prompt, description, color, icon, visibleFor, order } = req.body;
 
     if (!key || !name) {
-      throw httpError(400, 'Cle et nom de categorie requis.');
+      throw httpError(400, 'Clé et nom de catégorie requis.');
     }
 
     const existing = await Category.findOne({ key: key.toLowerCase().trim() });
     if (existing) {
-      throw httpError(409, 'Cette categorie existe deja.');
+      throw httpError(409, 'Cette catégorie existe déjà.');
     }
 
     const category = await Category.create({
@@ -79,7 +79,7 @@ router.put(
     const category = await Category.findOne(resolveCategoryFilter(req.params.id));
 
     if (!category) {
-      throw httpError(404, 'Categorie introuvable.');
+      throw httpError(404, 'Catégorie introuvable.');
     }
 
     const { key, name, prompt, description, color, icon, visibleFor, order } = req.body;
@@ -122,7 +122,7 @@ router.delete(
     const category = await Category.findOne(resolveCategoryFilter(req.params.id));
 
     if (!category) {
-      throw httpError(404, 'Categorie introuvable.');
+      throw httpError(404, 'Catégorie introuvable.');
     }
 
     await category.deleteOne();
