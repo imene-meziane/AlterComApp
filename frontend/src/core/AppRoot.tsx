@@ -21,6 +21,7 @@ import { MessagePage } from '../views/worker/MessagePage';
 import { PictogramsPage } from '../views/worker/PictogramsPage';
 import { RoutinesPage } from '../views/worker/RoutinesPage';
 import { WorkerHomePage } from '../views/worker/WorkerHomePage';
+import { WorkerSettingsPage } from '../views/worker/WorkerSettingsPage';
 import { WorkshopPage } from '../views/worker/WorkshopPage';
 
 function LandingRedirect(): React.ReactElement {
@@ -59,6 +60,7 @@ export function AppRoot(): React.ReactElement {
             <Route element={<WorkshopPage />} path="/worker/workshop" />
             <Route element={<MessagePage />} path="/worker/message" />
             <Route element={<FavoritesPage />} path="/worker/favorites" />
+            <Route element={<WorkerSettingsPage />} path="/worker/settings" />
           </Route>
         </Route>
 

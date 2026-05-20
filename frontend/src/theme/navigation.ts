@@ -8,6 +8,7 @@ import {
   MessageSquareText,
   NotebookText,
   PanelsTopLeft,
+  SlidersHorizontal,
   Star,
   UsersRound
 } from 'lucide-react';
@@ -19,7 +20,8 @@ export const workerNavigation = [
   { to: '/worker/emotions', label: 'Emotions', icon: Heart },
   { to: '/worker/workshop', label: 'Atelier', icon: PanelsTopLeft },
   { to: '/worker/message', label: 'Mon message', icon: MessageSquareText },
-  { to: '/worker/favorites', label: 'Favoris', icon: Star }
+  { to: '/worker/favorites', label: 'Favoris', icon: Star },
+  { to: '/worker/settings', label: 'Reglages', icon: SlidersHorizontal }
 ] as const;
 
 export const supervisorNavigation = [

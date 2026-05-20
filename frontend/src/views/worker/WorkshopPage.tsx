@@ -1,52 +1,106 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle2, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Clock3, Volume2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { PictogramCard } from '../../components/PictogramCard';
 import { ScreenLoader } from '../../components/ScreenLoader';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SectionHeader } from '../../components/ui/SectionHeader';
 import { useAuth } from '../../providers/AuthProvider';
 import { useComposer } from '../../providers/ComposerProvider';
 import { api } from '../../services/api';
-import { getWorkshopStory } from '../../theme/experience';
-import { Favorite, Pictogram, Workshop } from '../../types/models';
+import { speakText } from '../../services/speech';
+import { Favorite, Pictogram, Routine } from '../../types/models';
+
+const workshopSupportKeys = ['aide', 'pause', 'boire'];
+
+function pickPictogramsByKey(source: Pictogram[], keys: string[]): Pictogram[] {
+  const map = new Map(source.map(pictogram => [pictogram.key, pictogram]));
+
+  return keys
+    .map(key => map.get(key))
+    .filter((pictogram): pictogram is Pictogram => Boolean(pictogram));
+}
+
+function mergeUniquePictograms(...groups: Pictogram[][]): Pictogram[] {
+  const seen = new Set<string>();
+  const result: Pictogram[] = [];
+
+  groups.flat().forEach(pictogram => {
+    if (seen.has(pictogram.id)) {
+      return;
+    }
+
+    seen.add(pictogram.id);
+    result.push(pictogram);
+  });
+
+  return result;
+}
+
+function WorkshopQuickButton({
+  pictogram,
+  onSelect
+}: {
+  pictogram: Pictogram;
+  onSelect: (pictogram: Pictogram) => void;
+}): React.ReactElement {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.98 }}
+      className="rounded-[28px] border border-white/80 bg-white px-4 py-4 text-center shadow-soft transition hover:shadow-panel"
+      onClick={() => onSelect(pictogram)}
+      style={{
+        background: `linear-gradient(180deg, ${pictogram.color}18 0%, rgba(255,255,255,0.98) 76%)`
+      }}
+      type="button"
+    >
+      <div className="flex h-full flex-col items-center justify-center gap-3">
+        <div className="rounded-[24px] bg-white/95 p-3 shadow-soft">
+          <img alt="" className="h-12 w-12 object-contain" src={pictogram.imageUrl} />
+        </div>
+        <p className="text-sm font-black text-ink">{pictogram.label}</p>
+      </div>
+    </motion.button>
+  );
+}
 
 export function WorkshopPage(): React.ReactElement {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { addPictogram } = useComposer();
-  const [workshop, setWorkshop] = useState<Workshop | null>(null);
   const [pictograms, setPictograms] = useState<Pictogram[]>([]);
+  const [supportPictograms, setSupportPictograms] = useState<Pictogram[]>([]);
   const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [routines, setRoutines] = useState<Routine[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<Workshop[]>('/workshops', token)
-      .then(async fetchedWorkshops => {
-        const currentWorkshop = fetchedWorkshops[0] || null;
-        setWorkshop(currentWorkshop);
+    if (!user?.assignedWorkshop) {
+      setLoading(false);
+      return;
+    }
 
-        if (!currentWorkshop) {
-          setPictograms([]);
-          setFavorites([]);
-          return;
-        }
-
-        const [fetchedPictograms, fetchedFavorites] = await Promise.all([
-          api.get<Pictogram[]>(
-            `/pictograms?workshop=${encodeURIComponent(currentWorkshop.key)}`,
-            token
-          ),
-          api.get<Favorite[]>('/favorites', token)
-        ]);
-
+    Promise.all([
+      api.get<Pictogram[]>(
+        `/pictograms?workshop=${encodeURIComponent(user.assignedWorkshop.key)}`,
+        token
+      ),
+      api.get<Pictogram[]>('/pictograms?category=besoins', token),
+      api.get<Favorite[]>('/favorites', token),
+      api.get<Routine[]>('/routines', token)
+    ])
+      .then(([fetchedPictograms, fetchedNeeds, fetchedFavorites, fetchedRoutines]) => {
         setPictograms(fetchedPictograms);
+        setSupportPictograms(fetchedNeeds);
         setFavorites(fetchedFavorites);
+        setRoutines(fetchedRoutines);
       })
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, user]);
 
   async function toggleFavorite(pictogram: Pictogram): Promise<void> {
     const existing = favorites.find(
@@ -75,97 +129,233 @@ export function WorkshopPage(): React.ReactElement {
     return <ScreenLoader message="Mise en place de ton atelier..." />;
   }
 
-  if (!workshop) {
+  if (!user?.assignedWorkshop) {
     return (
       <div className="pb-10">
         <EmptyState
-          description="Un encadrant peut attribuer un atelier pour afficher le bon parcours et les pictogrammes utiles."
+          description="Un encadrant peut attribuer un atelier pour afficher les actions utiles."
           title="Aucun atelier assigne"
         />
       </div>
     );
   }
 
-  const story = getWorkshopStory(workshop);
+  const workshop = user.assignedWorkshop;
+  const workshopRoutines = routines.filter(
+    routine => !routine.workshop || routine.workshop.key === workshop.key
+  );
+  const currentRoutine =
+    workshopRoutines.find(routine => routine.assignment?.status === 'in_progress') ||
+    workshopRoutines.find(routine => routine.assignment?.status !== 'completed') ||
+    workshopRoutines[0] ||
+    null;
+  const currentStepIndex = currentRoutine?.assignment?.currentStepIndex || 0;
+  const currentStep = currentRoutine?.steps[currentStepIndex] || null;
+  const nextStep = currentRoutine?.steps[currentStepIndex + 1] || null;
+  const supportChoices = pickPictogramsByKey(supportPictograms, workshopSupportKeys);
+  const quickActions = mergeUniquePictograms(
+    currentStep?.pictogram ? [currentStep.pictogram] : [],
+    nextStep?.pictogram ? [nextStep.pictogram] : [],
+    supportChoices,
+    pictograms.slice(0, 2)
+  ).slice(0, 6);
+  const progress = currentRoutine?.assignment?.progressPercent || 0;
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="space-y-6 pb-10">
       <SectionHeader
-        description="Un espace plus immersif pour retrouver les consignes visuelles et les pictogrammes utiles a ton activite."
-        eyebrow={story.eyebrow}
-        title={story.title}
+        action={
+          <Link
+            className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-5 text-base font-bold text-ink shadow-soft ring-1 ring-slate-200 transition hover:bg-slate-50"
+            to="/worker/routines"
+          >
+            Ma routine
+          </Link>
+        }
+        eyebrow="Atelier"
+        title={workshop.name}
       />
 
-      <Card className="overflow-hidden p-0" tone="soft">
-        <div className="grid gap-6 p-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+        <Card className="overflow-hidden p-0" tone="soft">
           <div
-            className="rounded-[32px] p-6 text-white"
+            className="p-5"
             style={{
-              background: `linear-gradient(135deg, ${workshop.color}, rgba(47,58,75,0.88))`
+              background: `linear-gradient(135deg, ${workshop.color}26, rgba(255,255,255,0.96), rgba(79,140,255,0.08))`
             }}
           >
-            <Badge className="bg-white/20 text-white ring-white/15">Banniere atelier</Badge>
-            <h2 className="mt-4 text-4xl font-black">{workshop.name}</h2>
-            <p className="mt-3 max-w-2xl text-base leading-8 text-white/86">
-              {workshop.description}
-            </p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-2 text-sm font-extrabold">
-              <Sparkles className="h-4 w-4" />
-              {story.note}
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <Badge>Maintenant</Badge>
+                <p className="mt-2 text-2xl font-black text-ink">
+                  {currentRoutine?.title || 'Activite du jour'}
+                </p>
+                <p className="mt-1 text-sm font-bold text-muted">
+                  {currentStep?.instruction || workshop.description}
+                </p>
+              </div>
+              <div className="rounded-[22px] bg-white/92 px-4 py-3 shadow-soft ring-1 ring-white/80">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
+                  Progression
+                </p>
+                <p className="mt-1 text-2xl font-black text-ink">{progress}%</p>
+              </div>
+            </div>
+
+            <div className="mt-5 h-3 rounded-full bg-white/80">
+              <motion.div
+                animate={{ width: `${progress}%` }}
+                className="h-3 rounded-full bg-[linear-gradient(90deg,#4F8CFF,#7CC6A6)]"
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              />
             </div>
           </div>
 
-          <div className="grid gap-3">
-            {story.steps.map((step, index) => (
-              <Card className="flex items-start gap-4" key={step.title} tone="soft">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-emerald-50 text-emerald-600">
-                  <span className="text-lg font-black">{index + 1}</span>
+          <div className="grid gap-3 p-5">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-[24px] bg-white/90 p-4 ring-1 ring-slate-200/80">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
+                  Etape
+                </p>
+                <p className="mt-2 text-base font-black text-ink">
+                  {currentStep?.title || 'Preparer'}
+                </p>
+              </div>
+
+              <div className="rounded-[24px] bg-white/90 p-4 ring-1 ring-slate-200/80">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
+                  Ensuite
+                </p>
+                <p className="mt-2 text-base font-black text-ink">
+                  {nextStep?.title || 'Continuer'}
+                </p>
+              </div>
+
+              <div className="rounded-[24px] bg-white/90 p-4 ring-1 ring-slate-200/80">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
+                  Duree
+                </p>
+                <p className="mt-2 text-base font-black text-ink">
+                  {currentRoutine?.estimatedMinutes || 0} min
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-[24px] bg-white/75 p-4 ring-1 ring-white/80">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[16px] bg-sky text-brand">
+                  <Clock3 className="h-4 w-4" />
                 </div>
-                <div className="space-y-1">
-                  <p className="text-lg font-black text-ink">{step.title}</p>
-                  <p className="text-sm leading-7 text-muted">{step.text}</p>
+                <div>
+                  <p className="text-sm font-black text-ink">
+                    {currentStep?.instruction || 'Prends ton temps et avance doucement.'}
+                  </p>
                 </div>
-              </Card>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Button
+                iconLeft={<Volume2 className="h-4 w-4" />}
+                onClick={() =>
+                  speakText(
+                    currentStep?.audioText || currentStep?.instruction || currentRoutine?.title || workshop.name,
+                    {
+                      rate: user.preferences.speechRate,
+                      volume: user.preferences.speechVolume
+                    }
+                  )
+                }
+                variant="secondary"
+              >
+                Lire l etape
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="space-y-4" tone="soft">
+          <div>
+            <Badge>Dire vite</Badge>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {quickActions.map(pictogram => (
+              <WorkshopQuickButton key={pictogram.id} onSelect={addPictogram} pictogram={pictogram} />
             ))}
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
 
-      <Card className="space-y-4" tone="soft">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-emerald-50 text-emerald-600">
-            <CheckCircle2 className="h-5 w-5" />
-          </div>
+      {currentRoutine ? (
+        <Card className="space-y-4" tone="soft">
           <div>
-            <Badge>Phrases utiles</Badge>
-            <p className="mt-2 text-xl font-black text-ink">Ce que je peux dire dans l atelier</p>
+            <Badge>Etapes utiles</Badge>
           </div>
-        </div>
 
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {pictograms.slice(0, 3).map(pictogram => (
-            <Card className="space-y-2" key={pictogram.id} tone="tinted">
-              <p className="text-base font-black text-ink">{pictogram.label}</p>
-              <p className="text-sm leading-7 text-muted">{pictogram.phrase}</p>
-            </Card>
-          ))}
-        </div>
-      </Card>
+          <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
+            {currentRoutine.steps.map((step, index) => {
+              const done = currentRoutine.assignment?.completedStepIndexes.includes(index);
+              const isCurrent =
+                !done &&
+                index === currentRoutine.assignment?.currentStepIndex &&
+                currentRoutine.assignment?.status !== 'completed';
+
+              return (
+                <div
+                  className={`rounded-[24px] p-4 ring-1 ${
+                    done
+                      ? 'bg-emerald-50 ring-emerald-100'
+                      : isCurrent
+                        ? 'bg-sky ring-blue-100'
+                        : 'bg-white/90 ring-slate-200/80'
+                  }`}
+                  key={`${currentRoutine.id}-${step.order}`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-black ${
+                        done
+                          ? 'bg-emerald-500 text-white'
+                          : isCurrent
+                            ? 'bg-brand text-white'
+                            : 'bg-slate-100 text-muted'
+                      }`}
+                    >
+                      {step.order}
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-ink">{step.title}</p>
+                      <p className="mt-1 text-sm leading-6 text-muted">{step.instruction}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      ) : null}
 
       {pictograms.length ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {pictograms.map(pictogram => (
-            <PictogramCard
-              isFavorite={favorites.some(
-                favorite => favorite.kind === 'pictogram' && favorite.pictogram?.id === pictogram.id
-              )}
-              key={pictogram.id}
-              onSelect={addPictogram}
-              onToggleFavorite={toggleFavorite}
-              pictogram={pictogram}
-            />
-          ))}
-        </div>
+        <section className="space-y-4">
+          <div>
+            <Badge>Images utiles</Badge>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {pictograms.map(pictogram => (
+              <PictogramCard
+                isFavorite={favorites.some(
+                  favorite => favorite.kind === 'pictogram' && favorite.pictogram?.id === pictogram.id
+                )}
+                key={pictogram.id}
+                onSelect={addPictogram}
+                onToggleFavorite={toggleFavorite}
+                pictogram={pictogram}
+              />
+            ))}
+          </div>
+        </section>
       ) : (
         <EmptyState
           description="Les pictogrammes lies a cet atelier apparaitront ici."
