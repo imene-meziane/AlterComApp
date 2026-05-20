@@ -28,15 +28,33 @@ function getStatusLabel(status?: string): string {
   return 'envoyé';
 }
 
-export function HistoryPage(): React.ReactElement {
+interface HistoryPageProps {
+  defaultChannel?: string;
+  title?: string;
+  eyebrow?: string;
+  description?: string;
+  hideChannelFilter?: boolean;
+}
+
+export function HistoryPage({
+  defaultChannel = '',
+  title = 'Activité récente',
+  eyebrow = 'Historique',
+  description = 'Messages, urgences et routines terminées restent visibles dans une timeline claire.',
+  hideChannelFilter = false
+}: HistoryPageProps = {}): React.ReactElement {
   const { token } = useAuth();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [workers, setWorkers] = useState<User[]>([]);
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
   const [workerId, setWorkerId] = useState('');
   const [workshopId, setWorkshopId] = useState('');
-  const [channel, setChannel] = useState('');
+  const [channel, setChannel] = useState(defaultChannel);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setChannel(defaultChannel);
+  }, [defaultChannel]);
 
   useEffect(() => {
     Promise.all([
@@ -74,13 +92,12 @@ export function HistoryPage(): React.ReactElement {
 
   return (
     <div className="space-y-8 pb-10">
-      <SectionHeader
-        description="Messages, urgences et routines terminées restent visibles dans une timeline claire."
-        eyebrow="Historique"
-        title="Activité récente"
-      />
+      <SectionHeader description={description} eyebrow={eyebrow} title={title} />
 
-      <Card className="grid gap-4 lg:grid-cols-3" tone="soft">
+      <Card
+        className={`grid gap-4 ${hideChannelFilter ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}
+        tone="soft"
+      >
         <select
           className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft"
           onChange={event => setWorkerId(event.target.value)}
@@ -107,16 +124,18 @@ export function HistoryPage(): React.ReactElement {
           ))}
         </select>
 
-        <select
-          className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft"
-          onChange={event => setChannel(event.target.value)}
-          value={channel}
-        >
-          <option value="">Tous les types</option>
-          <option value="message">Message</option>
-          <option value="emergency">Urgence</option>
-          <option value="routine">Routine</option>
-        </select>
+        {!hideChannelFilter ? (
+          <select
+            className="h-14 rounded-[24px] border border-slate-200 bg-white px-5 shadow-soft"
+            onChange={event => setChannel(event.target.value)}
+            value={channel}
+          >
+            <option value="">Tous les types</option>
+            <option value="message">Message</option>
+            <option value="emergency">Urgence</option>
+            <option value="routine">Routine</option>
+          </select>
+        ) : null}
       </Card>
 
       <div className="grid gap-4">

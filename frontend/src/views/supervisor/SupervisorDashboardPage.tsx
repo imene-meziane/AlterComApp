@@ -1,241 +1,641 @@
-import React, { useEffect, useState } from 'react';
-import { BellRing, MessageSquareHeart, NotebookText, Sparkles, UsersRound } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  AlertTriangle,
+  ArrowRight,
+  Clock3,
+  History,
+  ImagePlus,
+  NotebookPen,
+  UserPlus,
+  Volume2
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-import { ScreenLoader } from '../../components/ScreenLoader';
-import { Badge } from '../../components/ui/Badge';
+import { AvatarBubble } from '../../components/ui/AvatarBubble';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { SectionHeader } from '../../components/ui/SectionHeader';
+import { ScreenLoader } from '../../components/ScreenLoader';
 import { useAuth } from '../../providers/AuthProvider';
 import { api } from '../../services/api';
-import { DashboardSummary, User, Workshop } from '../../types/models';
+import { speakText } from '../../services/speech';
+import { Alert, Message, Routine, User, UserRoutineAssignment } from '../../types/models';
 
-function getHistoryChannelLabel(channel: string): string {
-  if (channel === 'emergency') {
-    return 'Urgence';
-  }
-
-  if (channel === 'routine') {
-    return 'Routine';
-  }
-
-  return 'Message';
+interface RoutineBoardItem {
+  id: string;
+  worker: User;
+  routine: Routine;
+  assignment: UserRoutineAssignment;
+  progressPercent: number;
+  currentStepLabel: string;
+  currentStepPosition: string;
 }
 
-function getHistoryStatusLabel(status?: string): string {
-  if (status === 'completed') {
-    return 'terminé';
+function formatTime(value: string): string {
+  return new Date(value).toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function formatTodayTime(value: string): string {
+  const date = new Date(value);
+  const today = new Date();
+  const isToday =
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear();
+
+  if (isToday) {
+    return `Aujourd’hui à ${formatTime(value)}`;
   }
 
-  return 'envoyé';
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function getInitials(firstName: string, lastName: string): string {
+  return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
+}
+
+function getPriorityLabel(priority: Alert['priority']): string {
+  if (priority === 'urgent') {
+    return 'Urgente';
+  }
+
+  if (priority === 'important') {
+    return 'Importante';
+  }
+
+  return 'Normale';
+}
+
+function getPriorityClasses(priority: Alert['priority']): string {
+  if (priority === 'urgent') {
+    return 'bg-rose-50 text-rose-600 ring-rose-100';
+  }
+
+  if (priority === 'important') {
+    return 'bg-amber-50 text-orange-600 ring-orange-100';
+  }
+
+  return 'bg-slate-100 text-slate-700 ring-slate-200';
+}
+
+function getWorkerStatus(worker: User, latestMessage?: Message, pendingAlert?: Alert): string {
+  if (pendingAlert) {
+    return 'Alerte en attente';
+  }
+
+  if ((worker.routineAssignments || []).some(assignment => assignment.status === 'in_progress')) {
+    return 'Routine en cours';
+  }
+
+  if (latestMessage) {
+    return 'Message envoyé';
+  }
+
+  return 'À suivre';
 }
 
 export function SupervisorDashboardPage(): React.ReactElement {
-  const { token } = useAuth();
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const { token, user } = useAuth();
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [workers, setWorkers] = useState<User[]>([]);
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [routines, setRoutines] = useState<Routine[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pendingAlertId, setPendingAlertId] = useState('');
 
   useEffect(() => {
     Promise.all([
-      api.get<DashboardSummary>('/dashboard/summary', token),
+      api.get<Alert[]>('/alerts', token),
+      api.get<Message[]>('/messages?limit=18', token),
       api.get<User[]>('/users?role=worker', token),
-      api.get<Workshop[]>('/workshops', token)
+      api.get<Routine[]>('/routines', token)
     ])
-      .then(([fetchedSummary, fetchedWorkers, fetchedWorkshops]) => {
-        setSummary(fetchedSummary);
+      .then(([fetchedAlerts, fetchedMessages, fetchedWorkers, fetchedRoutines]) => {
+        setAlerts(fetchedAlerts);
+        setMessages(fetchedMessages);
         setWorkers(fetchedWorkers);
-        setWorkshops(fetchedWorkshops);
+        setRoutines(fetchedRoutines);
       })
       .finally(() => setLoading(false));
   }, [token]);
 
-  if (loading || !summary) {
-    return <ScreenLoader message="Construction du tableau de bord encadrant..." />;
+  const pendingAlerts = useMemo(() => {
+    return alerts
+      .filter(alert => alert.status === 'pending')
+      .sort((left, right) => {
+        const priorityWeight = { urgent: 3, important: 2, normal: 1 };
+
+        const diff =
+          priorityWeight[right.priority] - priorityWeight[left.priority];
+
+        if (diff !== 0) {
+          return diff;
+        }
+
+        return new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
+      });
+  }, [alerts]);
+
+  const recentMessages = useMemo(() => {
+    return messages
+      .filter(message => message.channel === 'message' || message.channel === 'emergency')
+      .slice(0, 6);
+  }, [messages]);
+
+  const latestMessageByWorker = useMemo(() => {
+    const map = new Map<string, Message>();
+
+    for (const message of messages) {
+      if (!message.workerId || map.has(message.workerId)) {
+        continue;
+      }
+
+      map.set(message.workerId, message);
+    }
+
+    return map;
+  }, [messages]);
+
+  const pendingAlertByWorker = useMemo(() => {
+    const map = new Map<string, Alert>();
+
+    for (const alert of pendingAlerts) {
+      const workerId = alert.workerId?.id;
+
+      if (!workerId || map.has(workerId)) {
+        continue;
+      }
+
+      map.set(workerId, alert);
+    }
+
+    return map;
+  }, [pendingAlerts]);
+
+  const routineBoard = useMemo(() => {
+    const routinesById = new Map(routines.map(routine => [routine.id, routine]));
+    const items: RoutineBoardItem[] = [];
+
+    for (const worker of workers) {
+      for (const assignment of worker.routineAssignments || []) {
+        if (assignment.status === 'completed') {
+          continue;
+        }
+
+        const routine = routinesById.get(assignment.routine.id);
+
+        if (!routine) {
+          continue;
+        }
+
+        const totalSteps = Math.max(routine.steps.length, 1);
+        const progressPercent =
+          assignment.progressPercent ??
+          Math.round((assignment.completedStepIndexes.length / totalSteps) * 100);
+        const currentStepIndex = Math.min(assignment.currentStepIndex || 0, totalSteps - 1);
+        const currentStep = routine.steps[currentStepIndex] || routine.steps[0];
+
+        items.push({
+          id: `${worker.id}-${routine.id}`,
+          worker,
+          routine,
+          assignment,
+          progressPercent,
+          currentStepLabel: currentStep?.title || 'Étape en cours',
+          currentStepPosition: `Étape ${Math.min(currentStepIndex + 1, totalSteps)}/${totalSteps}`
+        });
+      }
+    }
+
+    return items
+      .sort((left, right) => {
+        if (left.assignment.status !== right.assignment.status) {
+          return left.assignment.status === 'in_progress' ? -1 : 1;
+        }
+
+        return right.progressPercent - left.progressPercent;
+      })
+      .slice(0, 6);
+  }, [routines, workers]);
+
+  const workerCards = useMemo(() => {
+    return [...workers]
+      .sort((left, right) => {
+        const leftAlert = pendingAlertByWorker.has(left.id) ? 1 : 0;
+        const rightAlert = pendingAlertByWorker.has(right.id) ? 1 : 0;
+
+        if (leftAlert !== rightAlert) {
+          return rightAlert - leftAlert;
+        }
+
+        return `${left.firstName} ${left.lastName}`.localeCompare(
+          `${right.firstName} ${right.lastName}`,
+          'fr'
+        );
+      })
+      .slice(0, 8);
+  }, [pendingAlertByWorker, workers]);
+
+  async function markAlertAsResolved(alertId: string): Promise<void> {
+    setPendingAlertId(alertId);
+
+    try {
+      const updatedAlert = await api.put<Alert>(
+        `/alerts/${alertId}/status`,
+        {
+          status: 'resolved',
+          responseNote: "Aide prise en compte par l'encadrant."
+        },
+        token
+      );
+
+      setAlerts(current =>
+        current.map(alert => (alert.id === updatedAlert.id ? updatedAlert : alert))
+      );
+    } finally {
+      setPendingAlertId('');
+    }
+  }
+
+  if (loading || !user) {
+    return <ScreenLoader message="Préparation de l’accueil encadrant..." />;
   }
 
   return (
-    <div className="space-y-8 pb-10">
-      <SectionHeader
-        description="Une vue claire pour suivre les travailleurs, les routines, les alertes et l’activité du jour."
-        eyebrow="Tableau de bord"
-        title="Pilotage de l’accompagnement"
-      />
+    <div className="space-y-6 pb-10">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+        <div>
+          <h1 className="text-3xl font-black text-ink">{`Bonjour ${user.firstName}`}</h1>
+          <p className="mt-1 text-sm font-bold text-muted">Aujourd’hui</p>
+        </div>
 
-      <Card className="overflow-hidden p-0" tone="soft">
-        <div className="grid gap-5 bg-[linear-gradient(135deg,rgba(79,140,255,0.10),rgba(124,198,166,0.10),rgba(255,255,255,0.92))] p-6 lg:grid-cols-[1.08fr_0.92fr]">
-          <div className="space-y-4">
-            <Badge>ESAT Alter Ego</Badge>
-            <h2 className="text-4xl font-black leading-tight text-ink">
-              Un espace de suivi simple, professionnel et humain.
-            </h2>
-            <p className="max-w-3xl text-base leading-8 text-muted">
-              Les indicateurs privilégient le besoin d’aide, la progression des routines
-              et l’activité récente plutôt qu’une logique de tableau de bord froide.
+        <div className="flex flex-wrap gap-3">
+          <Link
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 text-base font-bold text-ink shadow-soft ring-1 ring-slate-200 transition hover:bg-slate-50"
+            to="/supervisor/pictograms"
+          >
+            <ImagePlus className="h-4 w-4" />
+            Ajouter un pictogramme
+          </Link>
+          <Link
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 text-base font-bold text-ink shadow-soft ring-1 ring-slate-200 transition hover:bg-slate-50"
+            to="/supervisor/routines"
+          >
+            <NotebookPen className="h-4 w-4" />
+            Créer une routine
+          </Link>
+          <Link
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[linear-gradient(135deg,#4F8CFF,#6AA5FF)] px-5 text-base font-bold text-white shadow-float transition hover:shadow-panel"
+            to="/supervisor/profiles"
+          >
+            <UserPlus className="h-4 w-4" />
+            Ajouter un travailleur
+          </Link>
+        </div>
+      </div>
+
+      <section className="space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-muted">
+              Alertes à traiter
             </p>
+            <h2 className="mt-2 text-2xl font-black text-ink">
+              {pendingAlerts.length} alerte{pendingAlerts.length > 1 ? 's' : ''} en attente
+            </h2>
           </div>
 
-          <div className="grid gap-3">
-            {[
-              {
-                title: 'Alertes en attente',
-                value: summary.metrics.pendingAlerts,
-                icon: BellRing,
-                tone: 'bg-rose-50 text-rose-500'
-              },
-              {
-                title: 'Routines en cours',
-                value: summary.metrics.activeRoutines,
-                icon: NotebookText,
-                tone: 'bg-emerald-50 text-emerald-600'
-              }
-            ].map(item => {
-              const Icon = item.icon;
+          <Link
+            className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink shadow-soft ring-1 ring-slate-200 transition hover:bg-slate-50"
+            to="/supervisor/alerts"
+          >
+            Voir tout
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <Card className="space-y-4" tone="soft">
+          {pendingAlerts.length ? (
+            pendingAlerts.slice(0, 4).map(alert => (
+              <div
+                className="rounded-[26px] bg-white px-5 py-4 shadow-soft ring-1 ring-slate-200"
+                key={alert.id}
+              >
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-lg font-black text-ink">
+                        {alert.workerId.firstName} {alert.workerId.lastName}
+                      </p>
+                      <span
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black ring-1 ${getPriorityClasses(alert.priority)}`}
+                      >
+                        {getPriorityLabel(alert.priority)}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-base font-bold text-ink">{alert.message}</p>
+                    <p className="mt-2 text-sm font-bold text-muted">
+                      {formatTime(alert.createdAt)}
+                    </p>
+                  </div>
+
+                  <Button
+                    className="h-11 px-4 text-sm"
+                    disabled={pendingAlertId === alert.id}
+                    iconLeft={<AlertTriangle className="h-4 w-4" />}
+                    onClick={() => markAlertAsResolved(alert.id)}
+                  >
+                    {pendingAlertId === alert.id ? 'Traitement...' : 'Marquer comme traité'}
+                  </Button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-[26px] bg-white px-5 py-6 text-sm font-bold text-muted shadow-soft ring-1 ring-slate-200">
+              Aucune alerte pour le moment.
+            </div>
+          )}
+        </Card>
+      </section>
+
+      <div className="grid gap-5 xl:grid-cols-[1.08fr_0.92fr]">
+        <section className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.16em] text-muted">
+                Messages récents
+              </p>
+              <h2 className="mt-2 text-2xl font-black text-ink">Derniers messages envoyés</h2>
+            </div>
+
+            <Link
+              className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-ink shadow-soft ring-1 ring-slate-200 transition hover:bg-slate-50"
+              to="/supervisor/messages"
+            >
+              Voir tout
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <Card className="space-y-4" tone="soft">
+            {recentMessages.length ? (
+              recentMessages.map(message => {
+                const workerName =
+                  message.workerName ||
+                  (message.worker
+                    ? `${message.worker.firstName} ${message.worker.lastName}`
+                    : 'Travailleur');
+                const initials = message.worker
+                  ? getInitials(message.worker.firstName, message.worker.lastName)
+                  : workerName
+                      .split(' ')
+                      .slice(0, 2)
+                      .map(part => part[0] || '')
+                      .join('')
+                      .toUpperCase();
+
+                return (
+                  <div
+                    className="rounded-[26px] bg-white px-5 py-4 shadow-soft ring-1 ring-slate-200"
+                    key={message.id}
+                  >
+                    <div className="flex items-start gap-4">
+                      <AvatarBubble className="h-12 w-12 rounded-[18px] text-base" initials={initials} />
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="text-lg font-black text-ink">{workerName}</p>
+                          <p className="text-sm font-bold text-muted">
+                            {formatTodayTime(message.createdAt)}
+                          </p>
+                        </div>
+
+                        <p className="mt-2 text-base font-bold text-ink">{message.text}</p>
+
+                        {(message.pictograms || []).length ? (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {(message.pictograms || []).slice(0, 4).map((pictogram, index) => (
+                              <span
+                                className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3 py-2 text-xs font-bold text-ink ring-1 ring-slate-200"
+                                key={`${message.id}-${pictogram.id || pictogram.label}-${index}`}
+                              >
+                                <img
+                                  alt=""
+                                  className="h-6 w-6 rounded-full bg-white p-1"
+                                  src={pictogram.imageUrl}
+                                />
+                                {pictogram.label}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+
+                      <Button
+                        className="h-11 shrink-0 px-4 text-sm"
+                        iconLeft={<Volume2 className="h-4 w-4" />}
+                        onClick={() =>
+                          speakText(message.text, {
+                            rate: message.speechRate,
+                            volume: message.speechVolume
+                          })
+                        }
+                        variant="secondary"
+                      >
+                        Rejouer
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="rounded-[26px] bg-white px-5 py-6 text-sm font-bold text-muted shadow-soft ring-1 ring-slate-200">
+                Aucun message récent pour le moment.
+              </div>
+            )}
+          </Card>
+        </section>
+
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-muted">
+              Routines du jour
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-ink">Routines en cours</h2>
+          </div>
+
+          <Card className="space-y-4" tone="soft">
+            {routineBoard.length ? (
+              routineBoard.map(item => (
+                <div
+                  className="rounded-[26px] bg-white px-5 py-4 shadow-soft ring-1 ring-slate-200"
+                  key={item.id}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-lg font-black text-ink">
+                        {item.worker.firstName} {item.worker.lastName}
+                      </p>
+                      <p className="mt-1 text-sm font-bold text-muted">
+                        {item.routine.workshop?.name || item.worker.assignedWorkshop?.name || 'Sans atelier'}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-slate-50 px-3 py-1 text-xs font-black text-ink ring-1 ring-slate-200">
+                      {item.currentStepPosition}
+                    </span>
+                  </div>
+
+                  <p className="mt-3 text-base font-black text-ink">{item.routine.title}</p>
+                  <p className="mt-1 text-sm font-bold text-muted">{item.currentStepLabel}</p>
+
+                  <div className="mt-4">
+                    <div className="mb-2 flex items-center justify-between text-sm font-bold text-muted">
+                      <span>Progression</span>
+                      <span>{item.progressPercent}%</span>
+                    </div>
+                    <div className="h-3 rounded-full bg-slate-100">
+                      <div
+                        className="h-3 rounded-full bg-[linear-gradient(90deg,#4F8CFF,#7CC6A6)]"
+                        style={{ width: `${Math.max(0, Math.min(item.progressPercent, 100))}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-[26px] bg-white px-5 py-6 text-sm font-bold text-muted shadow-soft ring-1 ring-slate-200">
+                Aucune routine en cours pour le moment.
+              </div>
+            )}
+          </Card>
+        </section>
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[1.12fr_0.88fr]">
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-muted">
+              Travailleurs
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-ink">Vue synthétique</h2>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {workerCards.map(worker => {
+              const latestMessage = latestMessageByWorker.get(worker.id);
+              const pendingAlert = pendingAlertByWorker.get(worker.id);
 
               return (
-                <Card className="flex items-center gap-4" key={item.title} tone="soft">
-                  <div className={`flex h-14 w-14 items-center justify-center rounded-[20px] ${item.tone}`}>
-                    <Icon className="h-6 w-6" />
+                <Card className="space-y-4" key={worker.id} tone="soft">
+                  <div className="flex items-start gap-4">
+                    <AvatarBubble
+                      className="h-12 w-12 rounded-[18px] text-base"
+                      initials={getInitials(worker.firstName, worker.lastName)}
+                    />
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-lg font-black text-ink">
+                          {worker.firstName} {worker.lastName}
+                        </p>
+                        <span className="rounded-full bg-slate-50 px-3 py-1 text-xs font-black text-ink ring-1 ring-slate-200">
+                          {worker.preferences.displayMode === 'simplified'
+                            ? 'Simplifié'
+                            : 'Complet'}
+                        </span>
+                      </div>
+
+                      <p className="mt-1 text-sm font-bold text-muted">
+                        {worker.assignedWorkshop?.name || 'Sans atelier'}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-muted">{item.title}</p>
-                    <p className="text-2xl font-black text-ink">{item.value}</p>
+
+                  <div className="space-y-2 text-sm">
+                    <div>
+                      <p className="font-black text-ink">Dernier message</p>
+                      <p className="mt-1 font-bold text-muted">
+                        {latestMessage?.text || 'Aucun message récent.'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-muted">
+                      <Clock3 className="h-4 w-4" />
+                      <span className="font-bold">
+                        {getWorkerStatus(worker, latestMessage, pendingAlert)}
+                      </span>
+                    </div>
                   </div>
                 </Card>
               );
             })}
           </div>
-        </div>
-      </Card>
+        </section>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {[
-          {
-            title: 'Travailleurs',
-            value: summary.metrics.workersCount,
-            icon: UsersRound,
-            bg: 'bg-blue-50 text-brand'
-          },
-          {
-            title: 'Pictogrammes actifs',
-            value: summary.metrics.pictogramsCount,
-            icon: Sparkles,
-            bg: 'bg-emerald-50 text-emerald-600'
-          },
-          {
-            title: 'Messages tracés',
-            value: summary.metrics.messagesCount,
-            icon: MessageSquareHeart,
-            bg: 'bg-orange-50 text-orange-500'
-          },
-          {
-            title: 'Routines terminées',
-            value: summary.metrics.completedRoutineEntries,
-            icon: NotebookText,
-            bg: 'bg-violet-50 text-violet-500'
-          }
-        ].map(item => {
-          const Icon = item.icon;
-
-          return (
-            <Card className="space-y-4" key={item.title} tone="soft">
-              <div className={`flex h-14 w-14 items-center justify-center rounded-[22px] ${item.bg}`}>
-                <Icon className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-muted">{item.title}</p>
-                <p className="mt-1 text-4xl font-black text-ink">{item.value}</p>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-
-      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
-        <Card className="space-y-5" tone="soft">
+        <section className="space-y-4">
           <div>
-            <Badge>Activité récente</Badge>
-            <p className="mt-3 text-2xl font-black text-ink">Messages, urgences et routines</p>
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-muted">
+              Actions rapides
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-ink">Accès utiles</h2>
           </div>
 
-          <div className="space-y-3">
-            {summary.recentHistory.map(entry => (
-              <div
-                className="flex flex-col gap-3 rounded-[26px] bg-white px-5 py-4 shadow-soft ring-1 ring-slate-200 md:flex-row md:items-center md:justify-between"
-                key={entry.id}
-              >
-                <div>
-                  <p className="text-lg font-black text-ink">
-                    {entry.workerName || `${entry.worker.firstName} ${entry.worker.lastName}`}
-                  </p>
-                  <p className="text-sm leading-7 text-muted">
-                    {entry.message?.text || entry.text}
-                  </p>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <Badge>{entry.workshop?.name || 'Sans atelier'}</Badge>
-                  <Badge>{getHistoryChannelLabel(entry.channel)}</Badge>
-                  <Badge>Statut : {getHistoryStatusLabel(entry.status)}</Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+          <Card className="grid gap-3" tone="soft">
+            {[
+              {
+                to: '/supervisor/profiles',
+                icon: UserPlus,
+                title: 'Gérer les profils',
+                note: 'Affecter les ateliers et ajuster les besoins.'
+              },
+              {
+                to: '/supervisor/history',
+                icon: History,
+                title: 'Voir l’historique',
+                note: 'Relire les envois et les routines terminées.'
+              },
+              {
+                to: '/supervisor/messages',
+                icon: Volume2,
+                title: 'Ouvrir les messages',
+                note: 'Suivre les derniers messages envoyés.'
+              },
+              {
+                to: '/supervisor/workshops',
+                icon: NotebookPen,
+                title: 'Gérer les ateliers',
+                note: 'Vérifier les ateliers et leurs contenus utiles.'
+              }
+            ].map(action => {
+              const Icon = action.icon;
 
-        <Card className="space-y-5" tone="soft">
-          <div>
-            <Badge>Travailleurs</Badge>
-            <p className="mt-3 text-2xl font-black text-ink">Profils en un coup d’œil</p>
-          </div>
-
-          <div className="grid gap-3">
-            {workers.map(worker => (
-              <div
-                className="rounded-[26px] bg-white px-5 py-4 shadow-soft ring-1 ring-slate-200"
-                key={worker.id}
-              >
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-lg font-black text-ink">
-                      {worker.firstName} {worker.lastName}
-                    </p>
-                    <p className="text-sm text-muted">
-                      {worker.assignedWorkshop?.name || 'Sans atelier'}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge>{worker.routineCount || 0} routines</Badge>
-                    <Badge>{worker.favoriteCount || 0} favoris</Badge>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+              return (
+                <Link
+                  className="flex items-center gap-4 rounded-[26px] bg-white px-5 py-4 shadow-soft ring-1 ring-slate-200 transition hover:bg-slate-50"
+                  key={action.to}
+                  to={action.to}
+                >
+                  <span className="flex h-11 w-11 items-center justify-center rounded-[18px] bg-sky text-brand">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-black text-ink">{action.title}</span>
+                    <span className="mt-1 block text-sm font-bold text-muted">{action.note}</span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-muted" />
+                </Link>
+              );
+            })}
+          </Card>
+        </section>
       </div>
-
-      <Card className="space-y-5" tone="soft">
-        <div>
-          <Badge>Ateliers actifs</Badge>
-          <p className="mt-3 text-2xl font-black text-ink">Vue rapide par atelier</p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {workshops.map(workshop => (
-            <div
-              className="rounded-[26px] bg-white px-5 py-4 shadow-soft ring-1 ring-slate-200"
-              key={workshop.id}
-            >
-              <p className="text-lg font-black text-ink">{workshop.name}</p>
-              <p className="mt-1 text-sm text-muted">{workshop.description}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Badge>{workshop.workerCount || 0} travailleurs</Badge>
-                <Badge>{workshop.pictogramCount || 0} pictogrammes</Badge>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { PictogramManagementPage } from '../views/supervisor/PictogramManagement
 import { ProfileManagementPage } from '../views/supervisor/ProfileManagementPage';
 import { RoutineManagementPage } from '../views/supervisor/RoutineManagementPage';
 import { SupervisorDashboardPage } from '../views/supervisor/SupervisorDashboardPage';
+import { SupervisorSettingsPage } from '../views/supervisor/SupervisorSettingsPage';
 import { WorkshopManagementPage } from '../views/supervisor/WorkshopManagementPage';
 import { FavoritesPage } from '../views/worker/FavoritesPage';
 import { MessagePage } from '../views/worker/MessagePage';
@@ -72,7 +73,20 @@ export function AppRoot(): React.ReactElement {
             <Route element={<WorkshopManagementPage />} path="/supervisor/workshops" />
             <Route element={<RoutineManagementPage />} path="/supervisor/routines" />
             <Route element={<ProfileManagementPage />} path="/supervisor/profiles" />
+            <Route
+              element={
+                <HistoryPage
+                  defaultChannel="message"
+                  description="Retrouve les derniers messages envoyés par les travailleurs."
+                  eyebrow="Messages"
+                  hideChannelFilter
+                  title="Messages récents"
+                />
+              }
+              path="/supervisor/messages"
+            />
             <Route element={<HistoryPage />} path="/supervisor/history" />
+            <Route element={<SupervisorSettingsPage />} path="/supervisor/settings" />
           </Route>
         </Route>
 
