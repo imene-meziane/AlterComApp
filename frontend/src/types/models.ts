@@ -123,6 +123,8 @@ export interface Favorite {
 }
 
 export interface MessageItem {
+  pictogramId?: string | null;
+  key?: string;
   pictogram?: Pictogram | null;
   label: string;
   builderText: string;
@@ -130,13 +132,26 @@ export interface MessageItem {
   color: string;
 }
 
+export interface MessagePictogram {
+  id?: string | null;
+  key?: string;
+  label: string;
+  imageUrl: string;
+  color: string;
+  builderText?: string;
+}
+
 export interface Message {
   id: string;
   worker?: User;
+  workerId?: string | null;
+  workerName?: string;
   workshop?: Workshop | null;
   items: MessageItem[];
+  pictograms?: MessagePictogram[];
   text: string;
   channel: MessageChannel;
+  status?: 'sent';
   speechRate: number;
   speechVolume: number;
   createdAt: string;
@@ -159,11 +174,13 @@ export interface Alert {
 export interface HistoryEntry {
   id: string;
   worker: User;
+  workerName?: string;
   workshop?: Workshop | null;
   message?: Message | null;
   routine?: Routine | null;
   text: string;
   channel: MessageChannel;
+  status?: string;
   createdAt: string;
 }
 
@@ -207,4 +224,10 @@ export interface ComposerItem {
 export interface NoticeState {
   tone: 'success' | 'error';
   text: string;
+  detail?: string;
+}
+
+export interface MessageCreateResponse {
+  success: boolean;
+  message: Message;
 }

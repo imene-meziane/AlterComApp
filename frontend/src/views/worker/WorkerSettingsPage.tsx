@@ -51,7 +51,7 @@ export function WorkerSettingsPage(): React.ReactElement {
         token
       );
       await refreshProfile(token);
-      setFeedback('Reglages enregistres.');
+      setFeedback('Réglages enregistrés.');
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : 'Enregistrement impossible.');
     } finally {
@@ -60,14 +60,14 @@ export function WorkerSettingsPage(): React.ReactElement {
   }
 
   if (!user) {
-    return <ScreenLoader message="Preparation des reglages..." />;
+    return <ScreenLoader message="Préparation des réglages..." />;
   }
 
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Regle la voix et l affichage utile sans alourdir la navigation."
-        eyebrow="Reglages"
+        description="Règle la voix et l’affichage utile sans alourdir la navigation."
+        eyebrow="Réglages"
         title="Voix et affichage"
       />
 
@@ -79,7 +79,7 @@ export function WorkerSettingsPage(): React.ReactElement {
             </div>
             <div>
               <Badge>Lecture vocale</Badge>
-              <p className="mt-2 text-xl font-black text-ink">Regler la voix</p>
+              <p className="mt-2 text-xl font-black text-ink">Régler la voix</p>
             </div>
           </div>
 
@@ -120,14 +120,14 @@ export function WorkerSettingsPage(): React.ReactElement {
           <Button
             iconLeft={<Volume2 className="h-4 w-4" />}
             onClick={() =>
-              speakText(`Bonjour ${user.firstName}. Ton message est pret.`, {
+              speakText(`Bonjour ${user.firstName}. Ton message est prêt.`, {
                 rate: speechRate,
                 volume: speechVolume
               })
             }
             variant="secondary"
           >
-            Ecouter un exemple
+            Écouter un exemple
           </Button>
         </Card>
 
@@ -182,7 +182,7 @@ export function WorkerSettingsPage(): React.ReactElement {
                   Mode
                 </p>
                 <p className="mt-2 text-base font-black text-ink">
-                  {user.preferences.displayMode === 'simplified' ? 'Simplifie' : 'Complet'}
+                  {user.preferences.displayMode === 'simplified' ? 'Simplifié' : 'Complet'}
                 </p>
               </div>
 
@@ -191,7 +191,9 @@ export function WorkerSettingsPage(): React.ReactElement {
                   Atelier
                 </p>
                 <p className="mt-2 text-base font-black text-ink">
-                  {user.assignedWorkshop?.name || 'Aucun atelier'}
+                  {(typeof user.assignedWorkshop === 'object' && user.assignedWorkshop
+                    ? user.assignedWorkshop.name
+                    : null) || 'Aucun atelier'}
                 </p>
               </div>
             </div>

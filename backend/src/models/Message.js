@@ -51,6 +51,11 @@ const messageSchema = new mongoose.Schema(
       enum: ['message', 'emergency'],
       default: 'message'
     },
+    status: {
+      type: String,
+      enum: ['sent'],
+      default: 'sent'
+    },
     speechRate: {
       type: Number,
       default: 1

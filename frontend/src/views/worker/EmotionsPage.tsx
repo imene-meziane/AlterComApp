@@ -107,7 +107,7 @@ export function EmotionsPage(): React.ReactElement {
   }
 
   if (loading) {
-    return <ScreenLoader message="Preparation de la page emotions..." />;
+    return <ScreenLoader message="Préparation de la page émotions..." />;
   }
 
   const mainEmotions = pickPictogramsByKey(emotionPictograms, mainEmotionKeys);
@@ -129,7 +129,7 @@ export function EmotionsPage(): React.ReactElement {
             </Link>
           ) : null
         }
-        eyebrow="Emotions"
+        eyebrow="Émotions"
         title="Comment te sens-tu ?"
       />
 
@@ -148,7 +148,7 @@ export function EmotionsPage(): React.ReactElement {
 
         <Card className="space-y-4" tone="soft">
           <div>
-            <Badge>J ai besoin</Badge>
+            <Badge>J’ai besoin</Badge>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
@@ -167,7 +167,7 @@ export function EmotionsPage(): React.ReactElement {
       {emotionPictograms.length ? (
         <section className="space-y-4">
           <div>
-            <Badge>Toutes les emotions</Badge>
+            <Badge>Toutes les émotions</Badge>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -187,8 +187,8 @@ export function EmotionsPage(): React.ReactElement {
         </section>
       ) : (
         <EmptyState
-          description="Les pictogrammes d emotions n ont pas encore ete charges."
-          title="Aucune emotion disponible"
+          description="Les pictogrammes d’émotions n’ont pas encore été chargés."
+          title="Aucune émotion disponible"
         />
       )}
     </div>

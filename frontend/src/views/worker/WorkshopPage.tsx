@@ -134,7 +134,7 @@ export function WorkshopPage(): React.ReactElement {
       <div className="pb-10">
         <EmptyState
           description="Un encadrant peut attribuer un atelier pour afficher les actions utiles."
-          title="Aucun atelier assigne"
+          title="Aucun atelier assigné"
         />
       </div>
     );
@@ -188,7 +188,7 @@ export function WorkshopPage(): React.ReactElement {
               <div>
                 <Badge>Maintenant</Badge>
                 <p className="mt-2 text-2xl font-black text-ink">
-                  {currentRoutine?.title || 'Activite du jour'}
+                  {currentRoutine?.title || 'Activité du jour'}
                 </p>
                 <p className="mt-1 text-sm font-bold text-muted">
                   {currentStep?.instruction || workshop.description}
@@ -215,10 +215,10 @@ export function WorkshopPage(): React.ReactElement {
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-[24px] bg-white/90 p-4 ring-1 ring-slate-200/80">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
-                  Etape
+                  Étape
                 </p>
                 <p className="mt-2 text-base font-black text-ink">
-                  {currentStep?.title || 'Preparer'}
+                  {currentStep?.title || 'Préparer'}
                 </p>
               </div>
 
@@ -233,7 +233,7 @@ export function WorkshopPage(): React.ReactElement {
 
               <div className="rounded-[24px] bg-white/90 p-4 ring-1 ring-slate-200/80">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
-                  Duree
+                  Durée
                 </p>
                 <p className="mt-2 text-base font-black text-ink">
                   {currentRoutine?.estimatedMinutes || 0} min
@@ -268,7 +268,7 @@ export function WorkshopPage(): React.ReactElement {
                 }
                 variant="secondary"
               >
-                Lire l etape
+                Lire l’étape
               </Button>
             </div>
           </div>
@@ -290,7 +290,7 @@ export function WorkshopPage(): React.ReactElement {
       {currentRoutine ? (
         <Card className="space-y-4" tone="soft">
           <div>
-            <Badge>Etapes utiles</Badge>
+            <Badge>Étapes utiles</Badge>
           </div>
 
           <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
@@ -358,8 +358,8 @@ export function WorkshopPage(): React.ReactElement {
         </section>
       ) : (
         <EmptyState
-          description="Les pictogrammes lies a cet atelier apparaitront ici."
-          title="Aucun pictogramme d atelier"
+          description="Les pictogrammes liés à cet atelier apparaîtront ici."
+          title="Aucun pictogramme d’atelier"
         />
       )}
     </div>

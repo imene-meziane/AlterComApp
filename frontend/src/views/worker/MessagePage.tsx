@@ -55,9 +55,9 @@ export function MessagePage(): React.ReactElement {
         },
         token
       );
-      setFeedback('Phrase ajoutee aux favoris.');
+      setFeedback('Phrase ajoutée aux favoris.');
     } catch (error) {
-      setFeedback(error instanceof Error ? error.message : 'Favori impossible.');
+      setFeedback(error instanceof Error ? error.message : 'Ajout aux favoris impossible.');
     } finally {
       setIsSavingFavorite(false);
     }
@@ -71,19 +71,19 @@ export function MessagePage(): React.ReactElement {
     }
 
     setMessages(current => [message, ...current]);
-    setFeedback('Message envoye et lu a voix haute.');
+    setFeedback('');
   }
 
   if (loading) {
-    return <ScreenLoader message="Preparation de ton message..." />;
+    return <ScreenLoader message="Préparation de ton message..." />;
   }
 
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Assemble les pictogrammes, ecoute la phrase et envoie le message sans distraction."
+        description="Assemble les pictogrammes, écoute la phrase et envoie le message clairement."
         eyebrow="Mon message"
-        title="Construire une phrase claire"
+        title="Construire un message clair"
       />
 
       <Card className="space-y-5 overflow-hidden p-0" tone="soft">
@@ -91,10 +91,10 @@ export function MessagePage(): React.ReactElement {
           <div className="space-y-3">
             <Badge>Phrase en cours</Badge>
             <h2 className="text-3xl font-black text-ink">
-              {sentence || 'Aucune phrase pour le moment.'}
+              {sentence || "Choisis une image pour commencer."}
             </h2>
             <p className="text-base leading-8 text-muted">
-              Appuie sur une bulle pour retirer un pictogramme de la phrase.
+              Touchez une image pour la retirer du message.
             </p>
           </div>
 
@@ -123,7 +123,7 @@ export function MessagePage(): React.ReactElement {
               ))
             ) : (
               <EmptyState
-                description="Ajoute des pictogrammes depuis la page pictogrammes, emotions ou ton atelier."
+                description="Ajoute des pictogrammes depuis Communication, Émotions, l’accueil ou ton atelier."
                 title="Le message est vide"
               />
             )}
@@ -168,7 +168,7 @@ export function MessagePage(): React.ReactElement {
       {messages.length ? (
         <section className="space-y-4">
           <div>
-            <Badge>Historique recent</Badge>
+            <Badge>Historique récent</Badge>
             <p className="mt-3 text-2xl font-black text-ink">Tes derniers messages</p>
           </div>
 
@@ -182,6 +182,26 @@ export function MessagePage(): React.ReactElement {
                   </span>
                 </div>
                 <p className="text-lg font-black text-ink">{message.text}</p>
+                {(message.pictograms || []).length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {(message.pictograms || []).map((pictogram, index) => (
+                      <span
+                        className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-bold text-ink ring-1 ring-slate-200"
+                        key={`${message.id}-${pictogram.id || pictogram.label}-${index}`}
+                      >
+                        <img
+                          alt=""
+                          className="h-6 w-6 rounded-full bg-slate-50 p-1"
+                          src={pictogram.imageUrl}
+                        />
+                        {pictogram.label}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+                <p className="text-sm font-bold text-muted">
+                  Statut : {message.status === 'sent' ? 'envoyé' : 'en attente'}
+                </p>
               </Card>
             ))}
           </div>

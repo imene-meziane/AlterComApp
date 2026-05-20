@@ -42,9 +42,21 @@ async function findWorkshopReference(workshopValue) {
 
 // Helper to normalize pictogram objects for the client
 function normalizePictogramForClient(p) {
-  if (!p) return p;
-  // if it's a mongoose document, convert to plain object
-  const obj = typeof p.toObject === 'function' ? p.toObject() : { ...p };
+  if (!p) {
+    return p;
+  }
+
+  const obj =
+    typeof p.toJSON === 'function'
+      ? p.toJSON()
+      : typeof p.toObject === 'function'
+        ? p.toObject()
+        : { ...p };
+
+  if (!obj.id && obj._id) {
+    obj.id = obj._id.toString();
+    delete obj._id;
+  }
 
   // Prefer filePath (local asset under frontend/public) over remote imageUrl
   const preferred = obj.filePath || obj.imageUrl || null;

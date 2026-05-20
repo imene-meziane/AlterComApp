@@ -4,6 +4,7 @@ const History = require('../models/History');
 const auth = require('../middleware/auth');
 const authorize = require('../middleware/authorize');
 const asyncHandler = require('../utils/asyncHandler');
+const { normalizeHistoryEntryForClient } = require('../utils/normalizeHistory');
 
 const router = express.Router();
 
@@ -31,12 +32,28 @@ router.get(
     const history = await History.find(filter)
       .populate('worker', 'firstName lastName avatar assignedWorkshop')
       .populate('workshop', 'key name color icon')
-      .populate('message')
+      .populate({
+        path: 'message',
+        populate: [
+          {
+            path: 'worker',
+            select: 'firstName lastName avatar role assignedWorkshop'
+          },
+          {
+            path: 'workshop',
+            select: 'key name color icon'
+          },
+          {
+            path: 'items.pictogram',
+            select: 'key label imageUrl color builderText phrase'
+          }
+        ]
+      })
       .populate('routine', 'title estimatedMinutes difficulty')
       .sort({ createdAt: -1 })
       .limit(limit);
 
-    res.json(history);
+    res.json(history.map(entry => normalizeHistoryEntryForClient(entry)));
   })
 );
 

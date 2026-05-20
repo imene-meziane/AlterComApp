@@ -7,6 +7,7 @@ import { useAuth } from './AuthProvider';
 import {
   ComposerItem,
   Message,
+  MessageCreateResponse,
   NoticeState,
   Pictogram
 } from '../types/models';
@@ -14,18 +15,45 @@ import {
 interface ComposerContextValue {
   items: ComposerItem[];
   sentence: string;
+  selectedPictograms: ComposerItem[];
+  generatedText: string;
   notice: NoticeState | null;
   isSending: boolean;
   addPictogram: (pictogram: Pictogram) => void;
+  addPictogramToMessage: (pictogram: Pictogram) => void;
   removePictogram: (clientId: string) => void;
+  removePictogramFromMessage: (clientId: string) => void;
   clearMessage: () => void;
   dismissNotice: () => void;
   speakCurrent: (options?: SpeechOptions) => void;
+  speakMessage: (options?: SpeechOptions) => void;
   sendCurrentMessage: (options?: SpeechOptions) => Promise<Message | null>;
+  sendMessage: (options?: SpeechOptions) => Promise<Message | null>;
   triggerEmergency: (options?: SpeechOptions) => Promise<Message | null>;
 }
 
 const ComposerContext = createContext<ComposerContextValue | null>(null);
+
+function getAssignedWorkshopId(assignedWorkshop: unknown): string | null {
+  if (!assignedWorkshop) {
+    return null;
+  }
+
+  if (typeof assignedWorkshop === 'string') {
+    return assignedWorkshop;
+  }
+
+  if (typeof assignedWorkshop === 'object') {
+    const workshop = assignedWorkshop as Record<string, unknown>;
+    const id = workshop.id;
+
+    if (typeof id === 'string') {
+      return id;
+    }
+  }
+
+  return null;
+}
 
 export function ComposerProvider({
   children
@@ -83,6 +111,10 @@ export function ComposerProvider({
 
   function speakCurrent(options?: SpeechOptions): void {
     if (!sentence) {
+      setNotice({
+        tone: 'error',
+        text: "Choisis une image d'abord."
+      });
       return;
     }
 
@@ -93,7 +125,19 @@ export function ComposerProvider({
   }
 
   async function sendCurrentMessage(options?: SpeechOptions): Promise<Message | null> {
-    if (!token || user?.role !== 'worker' || !items.length) {
+    if (!token || user?.role !== 'worker') {
+      return null;
+    }
+
+    if (isSending) {
+      return null;
+    }
+
+    if (!items.length || !sentence) {
+      setNotice({
+        tone: 'error',
+        text: "Choisis une image d'abord."
+      });
       return null;
     }
 
@@ -101,32 +145,46 @@ export function ComposerProvider({
       setIsSending(true);
       const speechRate = options?.rate ?? user.preferences.speechRate;
       const speechVolume = options?.volume ?? user.preferences.speechVolume;
-      const message = await api.post<Message>(
+      const response = await api.post<MessageCreateResponse>(
         '/messages',
         {
+          workerId: user.id,
+          workerName: `${user.firstName} ${user.lastName}`.trim(),
           pictogramIds: items.map(item => item.sourceId),
+          pictograms: items.map(item => ({
+            id: item.sourceId,
+            sourceId: item.sourceId,
+            label: item.label,
+            builderText: item.builderText,
+            imageUrl: item.imageUrl,
+            color: item.color
+          })),
+          text: sentence,
           speechRate,
           speechVolume,
-          workshopId: user.assignedWorkshop?.id || null
+          workshopId: getAssignedWorkshopId(user.assignedWorkshop)
         },
         token
       );
+      const message = response.message;
 
-      speakText(message.text, {
-        rate: message.speechRate,
-        volume: message.speechVolume
-      });
       clearMessage();
       setNotice({
         tone: 'success',
-        text: 'Message envoye et lu a voix haute.'
+        text: 'Ton message est envoyé.',
+        detail: message.text
+      });
+      speakText(message.text, {
+        rate: message.speechRate,
+        volume: message.speechVolume
       });
 
       return message;
     } catch (error) {
       setNotice({
         tone: 'error',
-        text: error instanceof Error ? error.message : 'Envoi impossible.'
+        text: "Le message n'a pas été envoyé.",
+        detail: error instanceof Error ? error.message : undefined
       });
       return null;
     } finally {
@@ -139,11 +197,15 @@ export function ComposerProvider({
       return null;
     }
 
+    if (isSending) {
+      return null;
+    }
+
     try {
       setIsSending(true);
       const speechRate = options?.rate ?? user.preferences.speechRate;
       const speechVolume = options?.volume ?? user.preferences.speechVolume;
-      const message = await api.post<Message>(
+      const response = await api.post<MessageCreateResponse>(
         '/messages/emergency',
         {
           text: "J'ai besoin d'aide.",
@@ -152,6 +214,7 @@ export function ComposerProvider({
         },
         token
       );
+      const message = response.message;
 
       speakText(message.text, {
         rate: message.speechRate,
@@ -159,14 +222,16 @@ export function ComposerProvider({
       });
       setNotice({
         tone: 'success',
-        text: 'Demande d aide envoyee.'
+        text: "Demande d'aide envoyée.",
+        detail: message.text
       });
 
       return message;
     } catch (error) {
       setNotice({
         tone: 'error',
-        text: error instanceof Error ? error.message : 'Urgence impossible.'
+        text: "La demande d'aide n'a pas été envoyée.",
+        detail: error instanceof Error ? error.message : undefined
       });
       return null;
     } finally {
@@ -179,14 +244,20 @@ export function ComposerProvider({
       value={{
         items,
         sentence,
+        selectedPictograms: items,
+        generatedText: sentence,
         notice,
         isSending,
         addPictogram,
+        addPictogramToMessage: addPictogram,
         removePictogram,
+        removePictogramFromMessage: removePictogram,
         clearMessage,
         dismissNotice,
         speakCurrent,
+        speakMessage: speakCurrent,
         sendCurrentMessage,
+        sendMessage: sendCurrentMessage,
         triggerEmergency
       }}
     >

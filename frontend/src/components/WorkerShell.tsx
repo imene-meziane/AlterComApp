@@ -24,7 +24,10 @@ export function WorkerShell(): React.ReactElement {
   }
 
   const initials = `${user.firstName[0] || ''}${user.lastName[0] || ''}`.toUpperCase();
-  const currentWorkshop = user.assignedWorkshop?.name || 'Profil travailleur';
+  const currentWorkshop =
+    typeof user.assignedWorkshop === 'object' && user.assignedWorkshop
+      ? user.assignedWorkshop.name
+      : 'Profil travailleur';
 
   return (
     <div className="relative min-h-screen">
@@ -59,7 +62,7 @@ export function WorkerShell(): React.ReactElement {
                       </p>
                       <div className="mt-2 inline-flex items-center rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand ring-1 ring-blue-100">
                         {user.preferences.displayMode === 'simplified'
-                          ? 'Mode simplifie'
+                          ? 'Mode simplifié'
                           : 'Mode complet'}
                       </div>
                     </div>
@@ -117,7 +120,7 @@ export function WorkerShell(): React.ReactElement {
                   <span className="flex h-9 w-9 items-center justify-center rounded-[16px] bg-rose-50">
                     <LogOut className="h-4 w-4" />
                   </span>
-                  <span>Deconnexion</span>
+                  <span>Déconnexion</span>
                 </button>
               </div>
             </Card>
@@ -191,7 +194,12 @@ export function WorkerShell(): React.ReactElement {
                   exit={{ opacity: 0, y: -10 }}
                   initial={{ opacity: 0, y: -10 }}
                 >
-                  <p className="text-sm font-bold text-muted">{notice.text}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-black text-ink">{notice.text}</p>
+                    {notice.detail ? (
+                      <p className="mt-1 text-sm font-bold text-muted">{notice.detail}</p>
+                    ) : null}
+                  </div>
                   <button
                     className="rounded-full bg-slate-50 px-3 py-1.5 text-xs font-extrabold text-ink transition hover:bg-slate-100"
                     onClick={dismissNotice}

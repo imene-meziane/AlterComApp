@@ -10,6 +10,7 @@ const Workshop = require('../models/Workshop');
 const auth = require('../middleware/auth');
 const authorize = require('../middleware/authorize');
 const asyncHandler = require('../utils/asyncHandler');
+const { normalizeHistoryEntryForClient } = require('../utils/normalizeHistory');
 
 const router = express.Router();
 
@@ -48,6 +49,23 @@ router.get(
       History.find({})
         .populate('worker', 'firstName lastName avatar')
         .populate('workshop', 'name color')
+        .populate({
+          path: 'message',
+          populate: [
+            {
+              path: 'worker',
+              select: 'firstName lastName avatar role assignedWorkshop'
+            },
+            {
+              path: 'workshop',
+              select: 'key name color icon'
+            },
+            {
+              path: 'items.pictogram',
+              select: 'key label imageUrl color builderText phrase'
+            }
+          ]
+        })
         .populate('routine', 'title')
         .sort({ createdAt: -1 })
         .limit(6),
@@ -73,7 +91,7 @@ router.get(
         activeRoutines,
         completedRoutineEntries
       },
-      recentHistory,
+      recentHistory: recentHistory.map(entry => normalizeHistoryEntryForClient(entry)),
       recentPictograms,
       recentAlerts
     });

@@ -17,11 +17,11 @@ export const workerNavigation = [
   { to: '/worker', label: 'Accueil', icon: House },
   { to: '/worker/pictograms', label: 'Communication', icon: Blocks },
   { to: '/worker/routines', label: 'Mes routines', icon: NotebookText },
-  { to: '/worker/emotions', label: 'Emotions', icon: Heart },
+  { to: '/worker/emotions', label: 'Émotions', icon: Heart },
   { to: '/worker/workshop', label: 'Atelier', icon: PanelsTopLeft },
   { to: '/worker/message', label: 'Mon message', icon: MessageSquareText },
   { to: '/worker/favorites', label: 'Favoris', icon: Star },
-  { to: '/worker/settings', label: 'Reglages', icon: SlidersHorizontal }
+  { to: '/worker/settings', label: 'Réglages', icon: SlidersHorizontal }
 ] as const;
 
 export const supervisorNavigation = [

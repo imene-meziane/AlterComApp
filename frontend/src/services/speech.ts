@@ -8,16 +8,22 @@ export function speakText(text: string, options: SpeechOptions = {}): void {
     return;
   }
 
-  const utterance = new window.SpeechSynthesisUtterance(text);
-  const voices = window.speechSynthesis.getVoices();
-  const frenchVoice = voices.find(voice => voice.lang.toLowerCase().startsWith('fr'));
+  try {
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    const frenchVoice = voices.find(voice => voice.lang.toLowerCase().startsWith('fr'));
 
-  utterance.lang = frenchVoice?.lang || 'fr-FR';
-  utterance.voice = frenchVoice || null;
-  utterance.rate = options.rate ?? 0.95;
-  utterance.volume = options.volume ?? 1;
-  utterance.pitch = 1;
+    utterance.lang = frenchVoice?.lang || 'fr-FR';
+    utterance.voice = frenchVoice || null;
+    utterance.rate = options.rate ?? 0.95;
+    utterance.volume = options.volume ?? 1;
+    utterance.pitch = 1;
 
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  } catch (error) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[speech] lecture vocale indisponible', error);
+    }
+  }
 }

@@ -21,7 +21,7 @@ const quickNeedLabels: Record<string, string> = {
   aide: 'Aide',
   boire: 'Eau',
   toilettes: 'Toilettes',
-  'j-ai-mal': "J'ai mal"
+  'j-ai-mal': "J’ai mal"
 };
 const emotionOrder = ['content', 'fatigue', 'stresse'];
 
@@ -124,7 +124,7 @@ export function WorkerHomePage(): React.ReactElement {
   }, [token, user]);
 
   if (loading || !user) {
-    return <ScreenLoader message="Preparation de ton accueil..." />;
+    return <ScreenLoader message="Préparation de ton accueil..." />;
   }
 
   const favoritePictograms = favorites
@@ -156,7 +156,7 @@ export function WorkerHomePage(): React.ReactElement {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-3xl font-black text-ink">{`Bonjour ${user.firstName}`}</h1>
-          <p className="mt-1 text-sm font-bold text-muted">Prete a communiquer ?</p>
+          <p className="mt-1 text-sm font-bold text-muted">Prête à communiquer ?</p>
         </div>
 
         {items.length ? (
@@ -175,14 +175,14 @@ export function WorkerHomePage(): React.ReactElement {
                 <Badge>Actions rapides</Badge>
                 <p className="mt-2 text-2xl font-black text-ink">Parler tout de suite</p>
                 <p className="mt-1 text-sm font-bold text-muted">
-                  Touchez une image pour l ajouter et l entendre.
+                  Touchez une image pour l’ajouter et l’entendre.
                 </p>
               </div>
               <Link
                 className="inline-flex h-11 items-center gap-2 rounded-full bg-white/90 px-4 text-sm font-bold text-ink shadow-soft ring-1 ring-slate-200 transition hover:bg-white"
                 to="/worker/pictograms"
               >
-                Plus d images
+                Plus d’images
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -192,7 +192,7 @@ export function WorkerHomePage(): React.ReactElement {
             <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
-                  Besoins frequents
+                  Besoins fréquents
                 </p>
                 <p className="text-xs font-bold text-muted">5 raccourcis utiles</p>
               </div>
@@ -282,12 +282,12 @@ export function WorkerHomePage(): React.ReactElement {
           <div className="bg-[linear-gradient(135deg,rgba(124,198,166,0.16),rgba(255,255,255,0.96),rgba(240,200,144,0.18))] p-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <Badge>Aujourd hui</Badge>
+                <Badge>Aujourd’hui</Badge>
                 <p className="mt-2 text-2xl font-black text-ink">
-                  {currentWorkshop?.name || 'Journee de travail'}
+                  {currentWorkshop?.name || 'Journée de travail'}
                 </p>
                 <p className="mt-1 text-sm font-bold text-muted">
-                  {currentRoutine ? 'Une action claire a suivre maintenant.' : workshopStory.note}
+                  {currentRoutine ? 'Une action claire à suivre maintenant.' : workshopStory.note}
                 </p>
               </div>
               <div className="rounded-[22px] bg-white/92 px-4 py-3 shadow-soft ring-1 ring-white/80">
@@ -320,10 +320,10 @@ export function WorkerHomePage(): React.ReactElement {
 
               <div className="rounded-[24px] bg-white/90 p-4 ring-1 ring-slate-200/80">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-muted">
-                  Etape actuelle
+                  Étape actuelle
                 </p>
                 <p className="mt-2 text-base font-black text-ink">
-                  {currentStep?.title || workshopStory.steps[0]?.title || 'Preparer'}
+                  {currentStep?.title || workshopStory.steps[0]?.title || 'Préparer'}
                 </p>
               </div>
 
@@ -429,7 +429,7 @@ export function WorkerHomePage(): React.ReactElement {
             </div>
           ) : (
             <EmptyState
-              description="Tes messages envoyes apparaitront ici."
+              description="Tes messages envoyés apparaîtront ici."
               title="Aucun envoi pour le moment"
             />
           )}
@@ -443,7 +443,7 @@ export function WorkerHomePage(): React.ReactElement {
               <HeartPulse className="h-5 w-5" />
             </div>
             <div>
-              <Badge>Etat emotionnel</Badge>
+              <Badge>État émotionnel</Badge>
               <p className="mt-2 text-xl font-black text-ink">Comment te sens-tu ?</p>
             </div>
           </div>

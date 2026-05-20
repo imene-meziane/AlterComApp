@@ -9,6 +9,26 @@ import { useAuth } from '../../providers/AuthProvider';
 import { api } from '../../services/api';
 import { DashboardSummary, User, Workshop } from '../../types/models';
 
+function getHistoryChannelLabel(channel: string): string {
+  if (channel === 'emergency') {
+    return 'Urgence';
+  }
+
+  if (channel === 'routine') {
+    return 'Routine';
+  }
+
+  return 'Message';
+}
+
+function getHistoryStatusLabel(status?: string): string {
+  if (status === 'completed') {
+    return 'terminé';
+  }
+
+  return 'envoyé';
+}
+
 export function SupervisorDashboardPage(): React.ReactElement {
   const { token } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -37,9 +57,9 @@ export function SupervisorDashboardPage(): React.ReactElement {
   return (
     <div className="space-y-8 pb-10">
       <SectionHeader
-        description="Une vue claire pour suivre les travailleurs, les routines, les alertes et l activite du jour."
+        description="Une vue claire pour suivre les travailleurs, les routines, les alertes et l’activité du jour."
         eyebrow="Tableau de bord"
-        title="Pilotage de l accompagnement"
+        title="Pilotage de l’accompagnement"
       />
 
       <Card className="overflow-hidden p-0" tone="soft">
@@ -50,8 +70,8 @@ export function SupervisorDashboardPage(): React.ReactElement {
               Un espace de suivi simple, professionnel et humain.
             </h2>
             <p className="max-w-3xl text-base leading-8 text-muted">
-              Les indicateurs privilegient le besoin d aide, la progression des routines
-              et l activite recente plutot qu une logique de tableau de bord froid.
+              Les indicateurs privilégient le besoin d’aide, la progression des routines
+              et l’activité récente plutôt qu’une logique de tableau de bord froide.
             </p>
           </div>
 
@@ -103,13 +123,13 @@ export function SupervisorDashboardPage(): React.ReactElement {
             bg: 'bg-emerald-50 text-emerald-600'
           },
           {
-            title: 'Messages traces',
+            title: 'Messages tracés',
             value: summary.metrics.messagesCount,
             icon: MessageSquareHeart,
             bg: 'bg-orange-50 text-orange-500'
           },
           {
-            title: 'Routines terminees',
+            title: 'Routines terminées',
             value: summary.metrics.completedRoutineEntries,
             icon: NotebookText,
             bg: 'bg-violet-50 text-violet-500'
@@ -134,7 +154,7 @@ export function SupervisorDashboardPage(): React.ReactElement {
       <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
         <Card className="space-y-5" tone="soft">
           <div>
-            <Badge>Activite recente</Badge>
+            <Badge>Activité récente</Badge>
             <p className="mt-3 text-2xl font-black text-ink">Messages, urgences et routines</p>
           </div>
 
@@ -146,13 +166,16 @@ export function SupervisorDashboardPage(): React.ReactElement {
               >
                 <div>
                   <p className="text-lg font-black text-ink">
-                    {entry.worker.firstName} {entry.worker.lastName}
+                    {entry.workerName || `${entry.worker.firstName} ${entry.worker.lastName}`}
                   </p>
-                  <p className="text-sm leading-7 text-muted">{entry.text}</p>
+                  <p className="text-sm leading-7 text-muted">
+                    {entry.message?.text || entry.text}
+                  </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge>{entry.workshop?.name || 'Sans atelier'}</Badge>
-                  <Badge>{entry.channel}</Badge>
+                  <Badge>{getHistoryChannelLabel(entry.channel)}</Badge>
+                  <Badge>Statut : {getHistoryStatusLabel(entry.status)}</Badge>
                 </div>
               </div>
             ))}
@@ -162,7 +185,7 @@ export function SupervisorDashboardPage(): React.ReactElement {
         <Card className="space-y-5" tone="soft">
           <div>
             <Badge>Travailleurs</Badge>
-            <p className="mt-3 text-2xl font-black text-ink">Profils en un coup d oeil</p>
+            <p className="mt-3 text-2xl font-black text-ink">Profils en un coup d’œil</p>
           </div>
 
           <div className="grid gap-3">
